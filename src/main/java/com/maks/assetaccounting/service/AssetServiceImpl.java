@@ -33,12 +33,12 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public List<Asset> generation() {
+    public List<Asset> generation(Long companyId) {
         return null;
     }
 
     @Override
-    public List<Asset> transition() {
+    public List<Asset> transition(Long fromId, Long toId) {
         return null;
     }
 
