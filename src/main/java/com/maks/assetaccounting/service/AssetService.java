@@ -17,7 +17,7 @@ public interface AssetService {
 
     List<Asset> generation(Long companyId);
 
-    List<Asset> transition(Long fromId, Long toId);
+    List<Asset> transition(List<Asset> assets, Long toId);
 
     List<Asset> getMarketable();
 

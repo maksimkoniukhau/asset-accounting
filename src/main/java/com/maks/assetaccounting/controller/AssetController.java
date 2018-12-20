@@ -19,7 +19,7 @@ public class AssetController {
         this.assetService = assetService;
     }
 
-    @PostMapping("create")
+    @PostMapping
     public Asset createAsset(@RequestBody Asset asset) {
         log.info("create {}", asset);
         return assetService.create(asset);
@@ -32,14 +32,14 @@ public class AssetController {
     }
 
     @GetMapping("generation")
-    public List<Asset> generationAssets(@RequestParam(value = "companyId") Long companyId) {
-        log.info("generation assets for company with id {}", companyId);
-        return assetService.generation(companyId);
+    public List<Asset> generationAssets(@RequestParam(value = "to") Long to) {
+        log.info("generation assets for company with id {}", to);
+        return assetService.generation(to);
     }
 
-    @GetMapping("transition")
-    public List<Asset> transitionAssets(@RequestParam(value = "from") Long from, @RequestParam(value = "to") Long to) {
-        log.info("transition assets from company with id {} to company with id {}", from, to);
-        return assetService.transition(from, to);
+    @PutMapping("transition")
+    public List<Asset> transitionAssets(@RequestBody List<Asset> assets, @RequestParam(value = "to") Long to) {
+        log.info("transition assets to company with id {}", to);
+        return assetService.transition(assets, to);
     }
 }

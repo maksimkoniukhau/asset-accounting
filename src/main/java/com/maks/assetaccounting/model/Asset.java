@@ -1,5 +1,6 @@
 package com.maks.assetaccounting.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,6 +32,8 @@ public class Asset {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @NonNull
+    @JsonIgnoreProperties("assets")
     private Company company;
 
     private int numberOfTransition;
