@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class AssetServiceImpl implements AssetService {
+public class AssetServiceImpl implements CrudService<Asset>, AssetService {
     private final AssetRepository assetRepository;
 
     private final CompanyRepository companyRepository;

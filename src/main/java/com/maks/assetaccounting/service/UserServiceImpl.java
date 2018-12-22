@@ -7,8 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements CrudService<User>, UserService {
     private final UserRepository userRepository;
 
     @Autowired
@@ -24,6 +26,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public User get(User user) {
+        return user;
+    }
+
+    @Override
+    public User update(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User delete(User user) {
+        userRepository.delete(user);
+        return user;
+    }
+
+    @Override
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 
     @Override
