@@ -1,7 +1,7 @@
 package com.maks.assetaccounting.controller;
 
-import com.maks.assetaccounting.model.Asset;
-import com.maks.assetaccounting.model.Company;
+import com.maks.assetaccounting.dto.AssetDto;
+import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.AssetService;
 import com.maks.assetaccounting.service.CompanyService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,19 +27,19 @@ public class ReportController {
     }
 
     @GetMapping("company")
-    public List<Company> getCompaniesWithAssetsInAscendingOrder() {
+    public List<CompanyDto> getCompaniesWithAssetsInAscendingOrder() {
         log.info("get companies with assets in ascending order");
-        return companyService.getCompaniesWithAssetsInAscendingOrder();
+        return companyService.findCompaniesWithAssetsInAscendingOrder();
     }
 
     @GetMapping("asset/marketable")
-    public List<Asset> getMarketableAssets() {
+    public List<AssetDto> getMarketableAssets() {
         log.info("get marketable assets");
         return assetService.getMarketable();
     }
 
     @GetMapping("asset/expensive-and-marketable")
-    public List<Asset> getExpensiveAndMarketableAssets() {
+    public List<AssetDto> getExpensiveAndMarketableAssets() {
         log.info("get expensive and marketable assets");
         return assetService.getExpensiveAndMarketable();
     }

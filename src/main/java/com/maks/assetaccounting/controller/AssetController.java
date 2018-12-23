@@ -1,6 +1,6 @@
 package com.maks.assetaccounting.controller;
 
-import com.maks.assetaccounting.model.Asset;
+import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.service.AssetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,26 +20,26 @@ public class AssetController {
     }
 
     @PostMapping
-    public Asset createAsset(@RequestBody Asset asset) {
-        log.info("create {}", asset);
-        return assetService.create(asset);
+    public AssetDto createAsset(@RequestBody AssetDto assetDto) {
+        log.info("create {}", assetDto);
+        return assetService.create(assetDto);
     }
 
     @GetMapping
-    public List<Asset> getAllAssets() {
+    public List<AssetDto> getAllAssets() {
         log.info("get all assets");
         return assetService.getAll();
     }
 
     @GetMapping("generation")
-    public List<Asset> generationAssets(@RequestParam(value = "to") Long to) {
+    public List<AssetDto> generationAssets(@RequestParam(value = "to") Long to) {
         log.info("generation assets for company with id {}", to);
         return assetService.generation(to);
     }
 
     @PutMapping("transition")
-    public List<Asset> transitionAssets(@RequestBody List<Asset> assets, @RequestParam(value = "to") Long to) {
+    public List<AssetDto> transitionAssets(@RequestBody List<AssetDto> assetDtos, @RequestParam(value = "to") Long to) {
         log.info("transition assets to company with id {}", to);
-        return assetService.transition(assets, to);
+        return assetService.transition(assetDtos, to);
     }
 }

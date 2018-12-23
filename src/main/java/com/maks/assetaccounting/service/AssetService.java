@@ -1,16 +1,16 @@
 package com.maks.assetaccounting.service;
 
-import com.maks.assetaccounting.model.Asset;
+import com.maks.assetaccounting.dto.AssetDto;
 
 import java.util.List;
 
-public interface AssetService {
+public interface AssetService extends CrudService<AssetDto, AssetDto> {
 
-    List<Asset> generation(Long companyId);
+    List<AssetDto> generation(Long companyId);
 
-    List<Asset> transition(List<Asset> assets, Long toId);
+    List<AssetDto> transition(List<AssetDto> assetDtos, Long toId);
 
-    List<Asset> getMarketable();
+    List<AssetDto> getMarketable();
 
-    List<Asset> getExpensiveAndMarketable();
+    List<AssetDto> getExpensiveAndMarketable();
 }

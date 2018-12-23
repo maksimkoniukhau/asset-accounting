@@ -2,15 +2,15 @@ package com.maks.assetaccounting.service;
 
 import java.util.List;
 
-public interface CrudService<T> {
+public interface CrudService<T1, T2> {
 
-    T create(T obj);
+    T1 create(T2 obj);
 
-    T get(T obj);
+    T1 get(Long id);
 
-    T update(T obj);
+    T1 update(T2 obj, Long id);
 
-    T delete(T obj);
+    T1 delete(Long id);
 
-    List<T> getAll();
+    List<T1> getAll();
 }

@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.model;
+package com.maks.assetaccounting.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

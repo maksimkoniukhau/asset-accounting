@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.model;
+package com.maks.assetaccounting.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
