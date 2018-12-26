@@ -1,15 +1,17 @@
 package com.maks.assetaccounting.dto;
 
-import com.maks.assetaccounting.HasId;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Data
-public class AssetDto implements HasId {
-
-    private Long id;
-
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class AssetDto extends AbstractDto {
+    @NotBlank
     private String name;
 
     private Date creationDate;

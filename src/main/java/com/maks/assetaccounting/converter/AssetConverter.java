@@ -13,7 +13,7 @@ public class AssetConverter implements DtoEntityConverter<AssetDto, Asset> {
     private final CompanyRepository companyRepository;
 
     @Autowired
-    public AssetConverter(CompanyRepository companyRepository) {
+    public AssetConverter(final CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
 
@@ -27,7 +27,7 @@ public class AssetConverter implements DtoEntityConverter<AssetDto, Asset> {
 
     @Override
     public Asset convertToEntity(final AssetDto assetDto) {
-        Asset asset = convertToEntityForCreate(assetDto);
+        final Asset asset = convertToEntityForCreate(assetDto);
         asset.setCreationDate(assetDto.getCreationDate());
         return asset;
     }

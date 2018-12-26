@@ -3,19 +3,18 @@ package com.maks.assetaccounting.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Company {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class Company extends AbstractEntity {
     @NonNull
+    @NotBlank
     private String name;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)

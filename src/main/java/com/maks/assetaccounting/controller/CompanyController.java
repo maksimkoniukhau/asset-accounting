@@ -1,7 +1,7 @@
 package com.maks.assetaccounting.controller;
 
 import com.maks.assetaccounting.dto.CompanyDto;
-import com.maks.assetaccounting.service.CompanyService;
+import com.maks.assetaccounting.service.company.CompanyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +15,12 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @Autowired
-    public CompanyController(CompanyService companyService) {
+    public CompanyController(final CompanyService companyService) {
         this.companyService = companyService;
     }
 
     @PostMapping
-    public CompanyDto createCompany(@RequestBody CompanyDto companyDto) {
+    public CompanyDto createCompany(@RequestBody final CompanyDto companyDto) {
         log.info("create {}", companyDto);
         return companyService.create(companyDto);
     }
@@ -31,8 +31,8 @@ public class CompanyController {
         return companyService.getAll();
     }
 
-    @GetMapping("{id}")                                            //optional
-    public CompanyDto getCompany(@PathVariable("id") Long id) {
+    @GetMapping("{id}")
+    public CompanyDto getCompany(@PathVariable("id") final Long id) {
         log.info("get company with id = {}", id);
         return companyService.get(id);
     }

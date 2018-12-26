@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.service;
+package com.maks.assetaccounting.service.company;
 
 import com.maks.assetaccounting.converter.CompanyConverter;
 import com.maks.assetaccounting.dto.AssetDto;
@@ -20,31 +20,31 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyConverter companyConverter;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository, CompanyConverter companyConverter) {
+    public CompanyServiceImpl(final CompanyRepository companyRepository, final CompanyConverter companyConverter) {
         this.companyRepository = companyRepository;
         this.companyConverter = companyConverter;
     }
 
     @Override
-    public CompanyDto create(CompanyDto companyDto) {
-        Company company = companyRepository.save(companyConverter.convertToEntity(companyDto));
+    public CompanyDto create(final CompanyDto companyDto) {
+        final Company company = companyRepository.save(companyConverter.convertToEntity(companyDto));
         return companyConverter.convertToDto(company);
     }
 
     @Override
-    public CompanyDto get(Long id) {
+    public CompanyDto get(final Long id) {
         return companyConverter.convertToDto(companyRepository.findById(id).orElse(null));
     }
 
     @Override
-    public CompanyDto update(CompanyDto companyDto, Long id) {
+    public CompanyDto update(final CompanyDto companyDto, final Long id) {
         assureIdConsistent(companyDto, id);
         return create(companyDto);
     }
 
     @Override
-    public CompanyDto delete(Long id) {
-        CompanyDto companyDto = get(id);
+    public CompanyDto delete(final Long id) {
+        final CompanyDto companyDto = get(id);
         companyRepository.deleteById(id);
         return companyDto;
     }
@@ -56,7 +56,7 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<CompanyDto> findCompaniesWithAssetsInAscendingOrder() {
-        List<CompanyDto> companyDtos = getAll();
+        final List<CompanyDto> companyDtos = getAll();
         companyDtos.forEach(companyDto -> companyDto.getAssetDtos().sort(Comparator.comparing(AssetDto::getCost)));
         return companyDtos;
     }

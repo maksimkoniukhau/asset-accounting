@@ -1,12 +1,11 @@
 package com.maks.assetaccounting.controller;
 
-import com.maks.assetaccounting.dto.user.UserToBackDto;
-import com.maks.assetaccounting.dto.user.UserToFrontDto;
+import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.entity.User;
-import com.maks.assetaccounting.service.UserService;
+import com.maks.assetaccounting.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,16 +15,17 @@ public class SecurityController {
     private final UserService userService;
 
     @Autowired
-    public SecurityController(UserService userService) {
+    public SecurityController(final UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/registration")
-    public UserToFrontDto addUser(@RequestBody UserToBackDto userToBackDto) {
-        User userFromDb = userService.getByName(userToBackDto.getUsername());
+    @PostMapping("/registration")
+    public UserDto addUser(@RequestBody final UserDto userDto) {
+        log.info("registration {}", userDto);
+        final User userFromDb = userService.getByName(userDto.getUsername());
         if (userFromDb != null) {
-            throw new IllegalArgumentException(userService.get(userToBackDto.getId()) + " already exists");
+            throw new IllegalArgumentException(userService.get(userFromDb.getId()) + " already exists");
         }
-        return userService.create(userToBackDto);
+        return userService.create(userDto);
     }
 }

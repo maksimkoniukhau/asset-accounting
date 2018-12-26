@@ -2,8 +2,8 @@ package com.maks.assetaccounting.controller;
 
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.dto.CompanyDto;
-import com.maks.assetaccounting.service.AssetService;
-import com.maks.assetaccounting.service.CompanyService;
+import com.maks.assetaccounting.service.asset.AssetService;
+import com.maks.assetaccounting.service.company.CompanyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ public class ReportController {
     private final AssetService assetService;
 
     @Autowired
-    public ReportController(CompanyService companyService, AssetService assetService) {
+    public ReportController(final CompanyService companyService, final AssetService assetService) {
         this.companyService = companyService;
         this.assetService = assetService;
     }

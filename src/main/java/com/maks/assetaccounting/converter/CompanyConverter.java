@@ -17,7 +17,7 @@ public class CompanyConverter implements DtoEntityConverter<CompanyDto, Company>
     private final AssetConverter assetConverter;
 
     @Autowired
-    public CompanyConverter(AssetConverter assetConverter) {
+    public CompanyConverter(final AssetConverter assetConverter) {
         this.assetConverter = assetConverter;
     }
 

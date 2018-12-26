@@ -1,15 +1,15 @@
 package com.maks.assetaccounting.util;
 
-import com.maks.assetaccounting.HasId;
+import com.maks.assetaccounting.dto.AbstractDto;
 
 public class ValidationUtil {
 
     private ValidationUtil() {
     }
 
-    public static void assureIdConsistent(HasId bean, long id) {
-        if (bean.getId() != id) {
-            throw new IllegalArgumentException(bean + " must be with id=" + id);
+    public static void assureIdConsistent(final AbstractDto dto, final long id) {
+        if (dto.getId() != id) {
+            throw new IllegalArgumentException(dto + " must be with id=" + id);
         }
     }
 }

@@ -5,6 +5,7 @@ import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.entity.Company;
 import com.maks.assetaccounting.repository.CompanyRepository;
+import com.maks.assetaccounting.service.company.CompanyServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

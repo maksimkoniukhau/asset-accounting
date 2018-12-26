@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.service;
+package com.maks.assetaccounting.service.asset;
 
 import com.maks.assetaccounting.converter.AssetConverter;
 import com.maks.assetaccounting.dto.AssetDto;
@@ -24,33 +24,34 @@ public class AssetServiceImpl implements AssetService {
     private final AssetConverter assetConverter;
 
     @Autowired
-    public AssetServiceImpl(AssetRepository assetRepository, CompanyRepository companyRepository, AssetConverter assetConverter) {
+    public AssetServiceImpl(final AssetRepository assetRepository, final CompanyRepository companyRepository
+            , final AssetConverter assetConverter) {
         this.assetRepository = assetRepository;
         this.companyRepository = companyRepository;
         this.assetConverter = assetConverter;
     }
 
     @Override
-    public AssetDto create(AssetDto assetDto) {
-        Asset asset = assetRepository.save(assetConverter.convertToEntityForCreate(assetDto));
+    public AssetDto create(final AssetDto assetDto) {
+        final Asset asset = assetRepository.save(assetConverter.convertToEntityForCreate(assetDto));
         return assetConverter.convertToDto(asset);
     }
 
     @Override
-    public AssetDto get(Long id) {
+    public AssetDto get(final Long id) {
         return assetConverter.convertToDto(assetRepository.findById(id).orElse(null));
     }
 
     @Override
-    public AssetDto update(AssetDto assetDto, Long id) {
+    public AssetDto update(final AssetDto assetDto, final Long id) {
         assureIdConsistent(assetDto, id);
-        Asset asset = assetRepository.save(assetConverter.convertToEntity(assetDto));
+        final Asset asset = assetRepository.save(assetConverter.convertToEntity(assetDto));
         return assetConverter.convertToDto(asset);
     }
 
     @Override
-    public AssetDto delete(Long id) {
-        AssetDto assetDto = get(id);
+    public AssetDto delete(final Long id) {
+        final AssetDto assetDto = get(id);
         assetRepository.deleteById(id);
         return assetDto;
     }
@@ -61,20 +62,20 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public List<AssetDto> generation(Long companyId) {
-        List<Asset> assets = new ArrayList<>();
-        Company toCompany = companyRepository.findById(companyId).orElse(null);
+    public List<AssetDto> generation(final Long companyId) {
+        final List<Asset> assets = new ArrayList<>();
+        final Company toCompany = companyRepository.findById(companyId).orElse(null);
         for (int i = 1; i <= 100; i++) {
-            Asset asset = new Asset(String.format("Asset number %d", i), new Date(), i + 1000, toCompany);
+            final Asset asset = new Asset(String.format("Asset number %d", i), new Date(), i + 1000, toCompany);
             assets.add(asset);
         }
         return assetConverter.convertListToDto(assetRepository.saveAll(assets));
     }
 
     @Override
-    public List<AssetDto> transition(List<AssetDto> assetDtos, Long toId) {
-        Company toCompany = companyRepository.findById(toId).orElse(null);
-        List<Asset> assets = assetConverter.convertListToEntity(assetDtos);
+    public List<AssetDto> transition(final List<AssetDto> assetDtos, final Long toId) {
+        final Company toCompany = companyRepository.findById(toId).orElse(null);
+        final List<Asset> assets = assetConverter.convertListToEntity(assetDtos);
         assets.forEach(asset -> {
             asset.setCompany(toCompany);
             asset.setTransferDate(new Date());

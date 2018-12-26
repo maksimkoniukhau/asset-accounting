@@ -1,9 +1,11 @@
 package com.maks.assetaccounting.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -11,14 +13,11 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@ToString(exclude = "company")
-@EqualsAndHashCode(of = "id")
-public class Asset {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
+@ToString(callSuper = true, exclude = "company")
+@EqualsAndHashCode(callSuper = true)
+public class Asset extends AbstractEntity {
     @NonNull
+    @NotBlank
     private String name;
 
     @NotNull
@@ -33,7 +32,6 @@ public class Asset {
     @ManyToOne
     @JoinColumn(name = "company_id")
     @NonNull
-    @JsonIgnoreProperties("assets")
     private Company company;
 
     private int numberOfTransition;

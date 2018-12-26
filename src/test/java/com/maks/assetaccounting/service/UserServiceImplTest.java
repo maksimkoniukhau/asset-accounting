@@ -1,13 +1,11 @@
 package com.maks.assetaccounting.service;
 
-import com.maks.assetaccounting.converter.user.UserToBackConverter;
-import com.maks.assetaccounting.converter.user.UserToFrontConverter;
-import com.maks.assetaccounting.converter.user.UserToSaveConverter;
-import com.maks.assetaccounting.dto.user.UserToBackDto;
-import com.maks.assetaccounting.dto.user.UserToFrontDto;
+import com.maks.assetaccounting.converter.UserConverter;
+import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.entity.Role;
 import com.maks.assetaccounting.entity.User;
 import com.maks.assetaccounting.repository.UserRepository;
+import com.maks.assetaccounting.service.user.UserServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,11 +28,7 @@ public class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
     @Spy
-    private UserToBackConverter userToBackConverter;
-    @Spy
-    private UserToFrontConverter userToFrontConverter;
-    @Spy
-    private UserToSaveConverter userToSaveConverter;
+    private UserConverter userConverter;
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 
@@ -54,48 +48,48 @@ public class UserServiceImplTest {
     public void testCreate() {
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        assertEquals(userServiceImpl.create(new UserToBackDto()), getUserToFrontDto());
+        assertEquals(userServiceImpl.create(new UserDto()), getUserDto());
 
         verify(userRepository, times(1)).save(any(User.class));
-        verify(userToSaveConverter, times(1)).convertToEntity(any(UserToBackDto.class));
-        verify(userToFrontConverter, times(1)).convertToDto(any(User.class));
+        verify(userConverter, times(1)).convertToSaveEntity(any(UserDto.class));
+        verify(userConverter, times(1)).convertToDto(any(User.class));
     }
 
     @Test
     public void testGet() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-        assertEquals(userServiceImpl.get(55L), getUserToFrontDto());
+        assertEquals(userServiceImpl.get(55L), getUserDto());
 
         verify(userRepository, times(1)).findById(anyLong());
-        verify(userToFrontConverter, times(1)).convertToDto(any(User.class));
+        verify(userConverter, times(1)).convertToDto(any(User.class));
     }
 
     @Test
     public void testUpdate() {
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        assertEquals(userServiceImpl.update(getUserToBackDto(), 5L), getUserToFrontDto());
+        assertEquals(userServiceImpl.update(getUserDto(), 5L), getUserDto());
 
         verify(userRepository, times(1)).save(any(User.class));
-        verify(userToBackConverter, times(1)).convertToEntity(any(UserToBackDto.class));
-        verify(userToFrontConverter, times(1)).convertToDto(any(User.class));
+        verify(userConverter, times(1)).convertToEntity(any(UserDto.class));
+        verify(userConverter, times(1)).convertToDto(any(User.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateWithIllegalArgument() {
-        userServiceImpl.update(getUserToBackDto(), 3L);
+        userServiceImpl.update(getUserDto(), 3L);
     }
 
     @Test
     public void testDelete() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-        assertEquals(userServiceImpl.delete(anyLong()), getUserToFrontDto());
+        assertEquals(userServiceImpl.delete(anyLong()), getUserDto());
 
         verify(userRepository, times(1)).findById(anyLong());
         verify(userRepository, times(1)).deleteById(anyLong());
-        verify(userToFrontConverter, times(1)).convertToDto(any(User.class));
+        verify(userConverter, times(1)).convertToDto(any(User.class));
     }
 
     @Test
@@ -104,16 +98,16 @@ public class UserServiceImplTest {
         userList.add(user);
         userList.add(user);
 
-        final List<UserToFrontDto> dtoList = new ArrayList<>();
-        dtoList.add(getUserToFrontDto());
-        dtoList.add(getUserToFrontDto());
+        final List<UserDto> dtoList = new ArrayList<>();
+        dtoList.add(getUserDto());
+        dtoList.add(getUserDto());
 
         when(userRepository.findAll()).thenReturn(userList);
 
         assertEquals(userServiceImpl.getAll(), dtoList);
 
         verify(userRepository, times(1)).findAll();
-        verify(userToFrontConverter, times(1)).convertListToDto(anyList());
+        verify(userConverter, times(1)).convertListToDto(anyList());
     }
 
     @Test
@@ -125,21 +119,13 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).findByUsername(anyString());
     }
 
-    private UserToFrontDto getUserToFrontDto() {
-        final UserToFrontDto userToFrontDto = new UserToFrontDto();
-        userToFrontDto.setId(5L);
-        userToFrontDto.setUsername("Vasia");
-        userToFrontDto.setActive(true);
-        userToFrontDto.setRoles(Collections.singleton(Role.USER));
-        return userToFrontDto;
-    }
-
-    private UserToBackDto getUserToBackDto() {
-        final UserToBackDto userToBackDto = new UserToBackDto();
-        userToBackDto.setId(5L);
-        userToBackDto.setUsername("Vasia");
-        userToBackDto.setPassword("12345");
-        userToBackDto.setActive(false);
-        return userToBackDto;
+    private UserDto getUserDto() {
+        final UserDto userDto = new UserDto();
+        userDto.setId(5L);
+        userDto.setUsername("Vasia");
+        userDto.setPassword("");
+        userDto.setActive(true);
+        userDto.setRoles(Collections.singleton(Role.USER));
+        return userDto;
     }
 }
