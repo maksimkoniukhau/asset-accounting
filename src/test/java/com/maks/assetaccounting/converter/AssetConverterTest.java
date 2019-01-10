@@ -10,7 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.anyString;
@@ -41,8 +43,10 @@ public class AssetConverterTest {
         asset.setName("Car");
         asset.setCost(30000);
         asset.setCompany(getCompany());
-        asset.setCreationDate(Date.valueOf("2018-12-25"));
-        asset.setTransferDate(Date.valueOf("2018-12-25"));
+        asset.setCreationDate(ZonedDateTime.of(LocalDateTime
+                .of(2018, 12, 25, 10, 10), ZoneId.systemDefault()));
+        asset.setTransferDate(ZonedDateTime.of(LocalDateTime
+                .of(2018, 12, 25, 10, 10), ZoneId.systemDefault()));
         return asset;
     }
 
@@ -52,8 +56,10 @@ public class AssetConverterTest {
         dto.setName("Car");
         dto.setCost(30000);
         dto.setCompanyName(getCompany().getName());
-        dto.setCreationDate(Date.valueOf("2018-12-25"));
-        dto.setTransferDate(Date.valueOf("2018-12-25"));
+        dto.setCreationDate(ZonedDateTime.of(LocalDateTime
+                .of(2018, 12, 25, 10, 10), ZoneId.systemDefault()));
+        dto.setTransferDate(ZonedDateTime.of(LocalDateTime
+                .of(2018, 12, 25, 10, 10), ZoneId.systemDefault()));
         return dto;
     }
 

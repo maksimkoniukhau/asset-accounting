@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface AssetService extends CrudService<AssetDto, AssetDto> {
 
+    List<AssetDto> getAllByName(final String name);
+
+    List<AssetDto> getAllByCompanyName(final String companyName);
+
     List<AssetDto> generation(final Long companyId);
 
     List<AssetDto> transition(final List<AssetDto> assetDtos, final Long toId);

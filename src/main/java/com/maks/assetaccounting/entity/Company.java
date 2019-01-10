@@ -15,6 +15,7 @@ import java.util.List;
 public class Company extends AbstractEntity {
     @NonNull
     @NotBlank
+    @Column(name = "name", unique = true)
     private String name;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)

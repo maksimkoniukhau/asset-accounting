@@ -18,11 +18,14 @@ import java.util.Set;
 @Table(name = "users")
 public class User extends AbstractEntity implements UserDetails {
     @NotBlank
+    @Column(name = "username", unique = true)
     private String username;
 
     @NotBlank
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "active")
     private boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

@@ -10,7 +10,7 @@ public interface DtoEntityConverter<T, E> {
     E convertToEntity(final T dto);
 
     default List<T> convertListToDto(final List<E> entities) {
-        if (entities != null && !entities.isEmpty()) {
+        if (entities != null) {
             return entities.stream()
                     .map(this::convertToDto)
                     .collect(Collectors.toList());
@@ -18,8 +18,8 @@ public interface DtoEntityConverter<T, E> {
         return null;
     }
 
-    default List<E> convertListToEntity(final List<T> dtos){
-        if (dtos != null && !dtos.isEmpty()) {
+    default List<E> convertListToEntity(final List<T> dtos) {
+        if (dtos != null) {
             return dtos.stream()
                     .map(this::convertToEntity)
                     .collect(Collectors.toList());

@@ -8,14 +8,17 @@ import com.maks.assetaccounting.repository.AssetRepository;
 import com.maks.assetaccounting.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.maks.assetaccounting.util.ValidationUtil.assureIdConsistent;
+import static com.maks.assetaccounting.util.ValidationUtil.checkNotFound;
 
 @Service
+@Transactional(readOnly = true)
 public class AssetServiceImpl implements AssetService {
     private final AssetRepository assetRepository;
 
@@ -32,6 +35,7 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    @Transactional
     public AssetDto create(final AssetDto assetDto) {
         final Asset asset = assetRepository.save(assetConverter.convertToEntityForCreate(assetDto));
         return assetConverter.convertToDto(asset);
@@ -43,6 +47,7 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    @Transactional
     public AssetDto update(final AssetDto assetDto, final Long id) {
         assureIdConsistent(assetDto, id);
         final Asset asset = assetRepository.save(assetConverter.convertToEntity(assetDto));
@@ -50,6 +55,7 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    @Transactional
     public AssetDto delete(final Long id) {
         final AssetDto assetDto = get(id);
         assetRepository.deleteById(id);
@@ -62,26 +68,45 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    public List<AssetDto> getAllByName(final String name) {
+        return assetConverter.convertListToDto(assetRepository.findAllByName(name));
+    }
+
+    @Override
+    public List<AssetDto> getAllByCompanyName(final String companyName) {
+        final Company company = companyRepository.findByName(companyName);
+        return assetConverter.convertListToDto(assetRepository
+                .findAllByCompany(checkNotFound(company, "name " + companyName)));
+    }
+
+    @Override
+    @Transactional
     public List<AssetDto> generation(final Long companyId) {
         final List<Asset> assets = new ArrayList<>();
         final Company toCompany = companyRepository.findById(companyId).orElse(null);
+        checkNotFound(toCompany, "id " + companyId);
         for (int i = 1; i <= 100; i++) {
-            final Asset asset = new Asset(String.format("Asset number %d", i), new Date(), i + 1000, toCompany);
+            final Asset asset = new Asset(String.format("Asset %d", i), ZonedDateTime.now(), i + 1000, toCompany);
             assets.add(asset);
         }
         return assetConverter.convertListToDto(assetRepository.saveAll(assets));
     }
 
     @Override
+    @Transactional
     public List<AssetDto> transition(final List<AssetDto> assetDtos, final Long toId) {
         final Company toCompany = companyRepository.findById(toId).orElse(null);
+        checkNotFound(toCompany, "id " + toId);
         final List<Asset> assets = assetConverter.convertListToEntity(assetDtos);
-        assets.forEach(asset -> {
-            asset.setCompany(toCompany);
-            asset.setTransferDate(new Date());
-            asset.setNumberOfTransition(asset.getNumberOfTransition() + 1);
-        });
-        return assetConverter.convertListToDto(assetRepository.saveAll(assets));
+        if (assets != null) {
+            assets.forEach(asset -> {
+                asset.setCompany(toCompany);
+                asset.setTransferDate(ZonedDateTime.now());
+                asset.setNumberOfTransition(asset.getNumberOfTransition() + 1);
+            });
+            return assetConverter.convertListToDto(assetRepository.saveAll(assets));
+        }
+        return null;
     }
 
     @Override

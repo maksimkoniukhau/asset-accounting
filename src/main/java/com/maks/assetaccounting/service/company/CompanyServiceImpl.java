@@ -7,6 +7,7 @@ import com.maks.assetaccounting.entity.Company;
 import com.maks.assetaccounting.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 import static com.maks.assetaccounting.util.ValidationUtil.assureIdConsistent;
 
 @Service
+@Transactional(readOnly = true)
 public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
 
@@ -26,6 +28,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public CompanyDto create(final CompanyDto companyDto) {
         final Company company = companyRepository.save(companyConverter.convertToEntity(companyDto));
         return companyConverter.convertToDto(company);
@@ -37,12 +40,14 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
     public CompanyDto update(final CompanyDto companyDto, final Long id) {
         assureIdConsistent(companyDto, id);
         return create(companyDto);
     }
 
     @Override
+    @Transactional
     public CompanyDto delete(final Long id) {
         final CompanyDto companyDto = get(id);
         companyRepository.deleteById(id);
@@ -55,9 +60,24 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public CompanyDto getByName(final String name) {
+        return companyConverter.convertToDto(companyRepository.findByName(name));
+    }
+
+    @Override
+    public List<CompanyDto> getCompaniesWithTheMostAssets() {
+        final List<CompanyDto> companyDtos = getAll();
+        if (companyDtos != null)
+            companyDtos.sort((o1, o2) -> o2.getAssetDtos().size() - o1.getAssetDtos().size());
+        return companyDtos;
+    }
+
+    @Override
     public List<CompanyDto> findCompaniesWithAssetsInAscendingOrder() {
         final List<CompanyDto> companyDtos = getAll();
-        companyDtos.forEach(companyDto -> companyDto.getAssetDtos().sort(Comparator.comparing(AssetDto::getCost)));
+        if (companyDtos != null)
+            companyDtos.forEach(companyDto -> companyDto.getAssetDtos()
+                    .sort(Comparator.comparing(AssetDto::getCost)));
         return companyDtos;
     }
 }

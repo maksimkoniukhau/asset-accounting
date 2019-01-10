@@ -2,12 +2,13 @@ package com.maks.assetaccounting.entity;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Entity
 @Data
@@ -18,15 +19,19 @@ import java.util.Date;
 public class Asset extends AbstractEntity {
     @NonNull
     @NotBlank
+    @Column(name = "name")
     private String name;
 
     @NotNull
-    private Date creationDate = new Date();
+    @Column(name = "creation_date")
+    private ZonedDateTime creationDate = ZonedDateTime.now();
 
     @NonNull
-    private Date transferDate;
+    @Column(name = "transfer_date")
+    private ZonedDateTime transferDate;
 
     @NonNull
+    @Column(name = "cost")
     private double cost;
 
     @ManyToOne
@@ -34,5 +39,6 @@ public class Asset extends AbstractEntity {
     @NonNull
     private Company company;
 
+    @Column(name = "number_of_transition")
     private int numberOfTransition;
 }

@@ -7,5 +7,9 @@ import java.util.List;
 
 public interface CompanyService extends CrudService<CompanyDto, CompanyDto> {
 
+    CompanyDto getByName(final String name);
+
+    List<CompanyDto> getCompaniesWithTheMostAssets();
+
     List<CompanyDto> findCompaniesWithAssetsInAscendingOrder();
 }
