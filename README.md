@@ -1,5 +1,7 @@
 # Прототип Системы Учета активов предприятия и генерация отчетов. 
  
+ <b>Used technologies:</b> Spring Boot, Vaadin 12, Maven, Git, PostgreSQL, Mockito, Lombok  
+ 
 Краткое описание 
 
 Система учета активов предприятия предназначена для:
