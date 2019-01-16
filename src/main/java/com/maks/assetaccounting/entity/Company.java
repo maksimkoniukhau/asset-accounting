@@ -2,7 +2,10 @@ package com.maks.assetaccounting.entity;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
@@ -15,7 +18,7 @@ import java.util.List;
 public class Company extends AbstractEntity {
     @NonNull
     @NotBlank
-    @Column(name = "name", unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)

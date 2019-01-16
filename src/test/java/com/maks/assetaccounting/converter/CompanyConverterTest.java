@@ -5,12 +5,17 @@ import com.maks.assetaccounting.entity.Company;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CompanyConverterTest {
+    @Mock
+    private AssetConverter assetConverter;
     @InjectMocks
     private CompanyConverter companyConverter;
 
@@ -28,6 +33,7 @@ public class CompanyConverterTest {
         final Company company = new Company();
         company.setId(1L);
         company.setName("Oracle");
+        company.setAssets(Collections.emptyList());
         return company;
     }
 
@@ -35,6 +41,7 @@ public class CompanyConverterTest {
         final CompanyDto dto = new CompanyDto();
         dto.setId(1L);
         dto.setName("Oracle");
+        dto.setAssetDtos(Collections.emptyList());
         return dto;
     }
 }

@@ -99,6 +99,7 @@ public class AssetServiceImplTest {
 
     @Test
     public void testTransition() {
+        when(companyRepository.findById(anyLong())).thenReturn(Optional.of(company));
         assetServiceImpl.transition(dtoList, anyLong());
 
         verify(companyRepository, times(1)).findById(anyLong());

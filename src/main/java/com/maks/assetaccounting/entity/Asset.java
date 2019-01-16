@@ -19,15 +19,16 @@ import java.time.ZonedDateTime;
 public class Asset extends AbstractEntity {
     @NonNull
     @NotBlank
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @NotNull
-    @Column(name = "creation_date")
+    @Column(name = "creation_date", nullable = false, columnDefinition = "TIMESTAMP default CURRENT_TIMESTAMP")
     private ZonedDateTime creationDate = ZonedDateTime.now();
 
     @NonNull
-    @Column(name = "transfer_date")
+    @NotNull
+    @Column(name = "transfer_date", nullable = false)
     private ZonedDateTime transferDate;
 
     @NonNull

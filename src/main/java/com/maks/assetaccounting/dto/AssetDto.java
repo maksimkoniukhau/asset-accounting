@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Data
@@ -16,6 +17,7 @@ public class AssetDto extends AbstractDto {
 
     private ZonedDateTime creationDate;
 
+    @NotNull
     private ZonedDateTime transferDate;
 
     private double cost;

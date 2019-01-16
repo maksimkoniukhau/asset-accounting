@@ -3,6 +3,7 @@ package com.maks.assetaccounting.converter;
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.entity.Asset;
 import com.maks.assetaccounting.entity.Company;
+import com.maks.assetaccounting.repository.AssetRepository;
 import com.maks.assetaccounting.repository.CompanyRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +14,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +25,8 @@ import static org.mockito.Mockito.when;
 public class AssetConverterTest {
     @Mock
     private CompanyRepository companyRepository;
+    @Mock
+    private AssetRepository assetRepository;
     @InjectMocks
     private AssetConverter assetConverter;
 
@@ -33,6 +38,7 @@ public class AssetConverterTest {
     @Test
     public void testConvertToEntity() {
         when(companyRepository.findByName(anyString())).thenReturn(getCompany());
+        when(assetRepository.findById(anyLong())).thenReturn(Optional.of(getAsset()));
 
         assertEquals(assetConverter.convertToEntity(getAssetDto()), getAsset());
     }
@@ -47,6 +53,7 @@ public class AssetConverterTest {
                 .of(2018, 12, 25, 10, 10), ZoneId.systemDefault()));
         asset.setTransferDate(ZonedDateTime.of(LocalDateTime
                 .of(2018, 12, 25, 10, 10), ZoneId.systemDefault()));
+        asset.setNumberOfTransition(1);
         return asset;
     }
 

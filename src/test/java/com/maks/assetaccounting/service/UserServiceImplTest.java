@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,11 +24,12 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
-
     @Mock
     private UserRepository userRepository;
-    @Spy
+    @Mock
     private UserConverter userConverter;
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 
@@ -40,26 +41,33 @@ public class UserServiceImplTest {
         user.setId(5L);
         user.setUsername("Vasia");
         user.setPassword("12345");
+        user.setFirstName("Vasiliy");
+        user.setLastName("Ivanov");
+        user.setEmail("vasia@mail.ru");
         user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
+        user.setRoles(Collections.singleton(Role.ROLE_ADMIN));
     }
 
     @Test
     public void testCreate() {
         when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userConverter.convertToCreateEntity(any(UserDto.class))).thenReturn(user);
+        when(userConverter.convertToDto(any(User.class))).thenReturn(getUserDto());
+        when(passwordEncoder.encode(anyString())).thenReturn("12345");
 
-        assertEquals(userServiceImpl.create(new UserDto()), getUserDto());
+        assertEquals(userServiceImpl.create(getUserDto()), getUserDto());
 
         verify(userRepository, times(1)).save(any(User.class));
-        verify(userConverter, times(1)).convertToSaveEntity(any(UserDto.class));
+        verify(userConverter, times(1)).convertToCreateEntity(any(UserDto.class));
         verify(userConverter, times(1)).convertToDto(any(User.class));
     }
 
     @Test
     public void testGet() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userConverter.convertToDto(any(User.class))).thenReturn(getUserDto());
 
-        assertEquals(userServiceImpl.get(55L), getUserDto());
+        assertEquals(userServiceImpl.get(5L), getUserDto());
 
         verify(userRepository, times(1)).findById(anyLong());
         verify(userConverter, times(1)).convertToDto(any(User.class));
@@ -68,6 +76,8 @@ public class UserServiceImplTest {
     @Test
     public void testUpdate() {
         when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userConverter.convertToEntity(any(UserDto.class))).thenReturn(user);
+        when(userConverter.convertToDto(any(User.class))).thenReturn(getUserDto());
 
         assertEquals(userServiceImpl.update(getUserDto(), 5L), getUserDto());
 
@@ -84,6 +94,7 @@ public class UserServiceImplTest {
     @Test
     public void testDelete() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userConverter.convertToDto(any(User.class))).thenReturn(getUserDto());
 
         assertEquals(userServiceImpl.delete(anyLong()), getUserDto());
 
@@ -103,6 +114,7 @@ public class UserServiceImplTest {
         dtoList.add(getUserDto());
 
         when(userRepository.findAll()).thenReturn(userList);
+        when(userConverter.convertListToDto(anyList())).thenReturn(dtoList);
 
         assertEquals(userServiceImpl.getAll(), dtoList);
 
@@ -113,19 +125,24 @@ public class UserServiceImplTest {
     @Test
     public void testGetByName() {
         when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(userConverter.convertToDto(any(User.class))).thenReturn(getUserDto());
 
-        userServiceImpl.getByName(anyString());
+        assertEquals(userServiceImpl.getByName(anyString()), getUserDto());
 
         verify(userRepository, times(1)).findByUsername(anyString());
+        verify(userConverter, times(1)).convertToDto(any(User.class));
     }
 
     private UserDto getUserDto() {
         final UserDto userDto = new UserDto();
         userDto.setId(5L);
         userDto.setUsername("Vasia");
-        userDto.setPassword("");
+        userDto.setPassword("12345");
+        userDto.setFirstName("Vasiliy");
+        userDto.setLastName("Ivanov");
+        userDto.setEmail("vasia@mail.ru");
         userDto.setActive(true);
-        userDto.setRoles(Collections.singleton(Role.USER));
+        userDto.setRoles(Collections.singleton(Role.ROLE_ADMIN));
         return userDto;
     }
 }

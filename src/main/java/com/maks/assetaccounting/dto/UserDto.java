@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Data
@@ -18,7 +20,16 @@ public class UserDto extends AbstractDto {
     @NotBlank
     private String password;
 
-    private boolean active;
+    private String firstName;
+
+    private String lastName;
+
+    @NotBlank
+    @Email
+    private String email;
+
+    @NotNull
+    private boolean active = true;
 
     private Set<Role> roles;
 }

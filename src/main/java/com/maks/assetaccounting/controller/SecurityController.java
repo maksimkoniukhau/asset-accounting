@@ -1,7 +1,6 @@
 package com.maks.assetaccounting.controller;
 
 import com.maks.assetaccounting.dto.UserDto;
-import com.maks.assetaccounting.entity.User;
 import com.maks.assetaccounting.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ public class SecurityController {
         log.info("registration {}", accountDto);
 
         if (!result.hasErrors()) {
-            final User userFromDb = userService.getByName(accountDto.getUsername());
+            final UserDto userFromDb = userService.getByName(accountDto.getUsername());
             if (userFromDb != null) {
                 throw new IllegalArgumentException(userService.get(userFromDb.getId()) + " already exists");
             }
