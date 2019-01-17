@@ -46,8 +46,10 @@ public class AssetMain extends VerticalLayout implements RouterLayout {
         final Button saveButton = new Button("Save", new Icon(VaadinIcon.ENVELOPE_OPEN));
         saveButton.getElement().setAttribute("theme", "primary");
         saveButton.addClickListener(event -> {
-            assetForm.save();
-            saveDialog.close();
+            if (assetForm.getBinder().validate().isOk()) {
+                assetForm.save();
+                saveDialog.close();
+            }
         });
 
         final Button deleteButton = new Button("Delete", new Icon(VaadinIcon.TRASH));
@@ -83,13 +85,13 @@ public class AssetMain extends VerticalLayout implements RouterLayout {
 
         grid.setSizeFull();
         grid.addColumn(AssetDto::getId).setHeader("Asset Id").setVisible(false);
-        grid.addColumn(AssetDto::getName).setHeader("Asset Name");
+        grid.addColumn(AssetDto::getName).setSortable(true).setHeader("Asset Name");
         grid.addColumn(assetDto -> assetDto.getCreationDate()
-                .format(DATE_TIME_FORMATTER)).setHeader("Creation Date");
+                .format(DATE_TIME_FORMATTER)).setSortable(true).setHeader("Creation Date");
         grid.addColumn(assetDto -> assetDto.getTransferDate()
-                .format(DATE_TIME_FORMATTER)).setHeader("Transfer Date");
-        grid.addColumn(AssetDto::getCost).setHeader("Cost");
-        grid.addColumn(AssetDto::getCompanyName).setHeader("Company Name");
+                .format(DATE_TIME_FORMATTER)).setSortable(true).setHeader("Transfer Date");
+        grid.addColumn(AssetDto::getCost).setSortable(true).setHeader("Cost");
+        grid.addColumn(AssetDto::getCompanyName).setSortable(true).setHeader("Company Name");
         grid.addComponentColumn(assetDto -> {
             final Button edit = new Button("Edit");
             edit.addClickListener(event -> {

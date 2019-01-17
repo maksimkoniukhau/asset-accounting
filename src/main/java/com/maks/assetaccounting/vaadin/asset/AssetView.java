@@ -36,11 +36,15 @@ public class AssetView extends AssetMain {
         generationCompanyName.setPlaceholder("Generation for company...");
         final Button generationBtn = new Button("Generation Assets");
         generationBtn.addClickListener(e -> {
-            String companyName = generationCompanyName.getValue();
-            getAssetService().generation(checkNotFound(getCompanyService()
-                    .getByName(companyName), "name = " + companyName).getId());
-            generationCompanyName.clear();
-            updateList();
+            final String value = generationCompanyName.getValue();
+            if (!value.isEmpty() && getCompanyService().getByName(value) != null) {
+                String companyName = generationCompanyName.getValue();
+                getAssetService().generation(checkNotFound(getCompanyService()
+                        .getByName(companyName), "name = " + companyName).getId());
+                generationCompanyName.clear();
+                updateList();
+            }
+
         });
 
         List<AssetDto> assetDtos = new ArrayList<>();
@@ -48,11 +52,14 @@ public class AssetView extends AssetMain {
         transitionCompanyName.setPlaceholder("Transition to company...");
         final Button transitionBtn = new Button("Transition Assets");
         transitionBtn.addClickListener(e -> {
-            String companyName = transitionCompanyName.getValue();
-            getAssetService().transition(assetDtos, checkNotFound(getCompanyService()
-                    .getByName(companyName), "name = " + companyName).getId());
-            transitionCompanyName.clear();
-            updateList();
+            final String value = transitionCompanyName.getValue();
+            if (!value.isEmpty() && getCompanyService().getByName(value) != null) {
+                String companyName = transitionCompanyName.getValue();
+                getAssetService().transition(assetDtos, checkNotFound(getCompanyService()
+                        .getByName(companyName), "name = " + companyName).getId());
+                transitionCompanyName.clear();
+                updateList();
+            }
         });
 
         getGrid().setSelectionMode(Grid.SelectionMode.MULTI);

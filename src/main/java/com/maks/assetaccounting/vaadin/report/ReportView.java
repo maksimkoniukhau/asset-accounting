@@ -26,6 +26,7 @@ public class ReportView extends VerticalLayout {
         final Anchor assets = new Anchor(assetsRoute, "Asset Reports");
         assets.getStyle().set("text-decoration", "none");
 
+        setSizeFull();
         add(img, new H4(companies), new H4(assets));
     }
 }

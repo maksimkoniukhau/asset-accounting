@@ -20,7 +20,7 @@ public class MainView extends VerticalLayout {
     private void init() {
         final Image img = new Image("https://i.imgur.com/LaWFLZf.jpg", "Oracle");
         img.setSizeFull();
-        img.setHeight("250px");
+        img.setHeight("230px");
 
         final Component content = new Span(new H3("Прототип Системы Учета активов предприятия и генерация отчетов"),
                 new Paragraph("Система учета активов предприятия предназначена для:"),
@@ -33,7 +33,8 @@ public class MainView extends VerticalLayout {
                 new Paragraph(" - активов, которые переходят от одной компании к другой чаще всего, " +
                         "то есть самых востребованных."),
                 new Paragraph(" - компаний, со списком активов в порядке возрастания цены."),
-                new Paragraph(" - самых дорогих активов и самых востребованных одновременно"));
+                new Paragraph(" - самых дорогих активов и самых востребованных одновременно"),
+                new Paragraph(" - и другие"));
 
         add(img, content);
     }

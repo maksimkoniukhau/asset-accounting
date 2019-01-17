@@ -17,7 +17,11 @@ public class CompanyForm extends FormLayout {
     }
 
     private void init() {
-        binder.bindInstanceFields(this);
+        binder.forField(name)
+                .asRequired("Company Name field is required")
+                .withValidator(name -> name.matches("^.*\\S.*$"),
+                        "Company Name must contain at least one non-whitespace character")
+                .bind("name");
         add(name);
         setCompanyDto(null);
     }
@@ -42,5 +46,9 @@ public class CompanyForm extends FormLayout {
         }
         companyMain.updateList();
         setCompanyDto(null);
+    }
+
+    public Binder<CompanyDto> getBinder() {
+        return binder;
     }
 }

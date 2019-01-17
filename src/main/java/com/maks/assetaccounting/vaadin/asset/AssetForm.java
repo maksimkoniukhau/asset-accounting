@@ -23,19 +23,24 @@ public class AssetForm extends FormLayout {
     }
 
     private void init() {
+        binder.forField(name)
+                .asRequired("Asset Name field is required")
+                .withValidator(name -> name.matches("^.*\\S.*$"),
+                        "Asset Name must contain at least one non-whitespace character")
+                .bind("name");
+        binder.forField(transferDate)
+                .asRequired("Transfer Date field is required")
+                .withConverter(new LocalDateZonedDateTimeConverter())
+                .bind("transferDate");
+        binder.forField(cost)
+                .asRequired("Asset Cost field is required")
+                .withConverter(new StringToDoubleConverter("Must enter a number"))
+                .bind("cost");
         binder.forField(companyName)
+                .asRequired("Company Name field is required")
                 .withValidator(name -> assetMain.getCompanyService()
                         .getByName(name) != null, "No exists such company")
-                .bind(AssetDto::getCompanyName, AssetDto::setCompanyName);
-        binder.forField(transferDate)
-                .asRequired("Enter a date")
-                .withConverter(new LocalDateZonedDateTimeConverter())
-                .bind(AssetDto::getTransferDate, AssetDto::setTransferDate);
-        binder.forField(cost)
-                .asRequired("Enter a cost")
-                .withConverter(new StringToDoubleConverter("Must enter a number"))
-                .bind(AssetDto::getCost, AssetDto::setCost);
-        binder.bindInstanceFields(this);
+                .bind("companyName");
         add(name, transferDate, cost, companyName);
         setAssetDto(null);
     }
@@ -60,5 +65,9 @@ public class AssetForm extends FormLayout {
         }
         assetMain.updateList();
         setAssetDto(null);
+    }
+
+    public Binder<AssetDto> getBinder() {
+        return binder;
     }
 }

@@ -43,8 +43,10 @@ public class CompanyMain extends VerticalLayout implements RouterLayout {
         final Button saveButton = new Button("Save", new Icon(VaadinIcon.ENVELOPE_OPEN));
         saveButton.getElement().setAttribute("theme", "primary");
         saveButton.addClickListener(event -> {
-            companyForm.save();
-            saveDialog.close();
+            if (companyForm.getBinder().validate().isOk()) {
+                companyForm.save();
+                saveDialog.close();
+            }
         });
 
         final Button deleteButton = new Button("Delete", new Icon(VaadinIcon.TRASH));
@@ -75,7 +77,7 @@ public class CompanyMain extends VerticalLayout implements RouterLayout {
 
         grid.setSizeFull();
         grid.addColumn(CompanyDto::getId).setHeader("Company Id").setVisible(false);
-        grid.addColumn(CompanyDto::getName).setHeader("Company Name");
+        grid.addColumn(CompanyDto::getName).setSortable(true).setHeader("Company Name");
         grid.addComponentColumn(companyDto -> {
             final Dialog assetListDialog = new Dialog();
             final Grid<AssetDto> assetGrid = new Grid<>();
