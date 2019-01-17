@@ -3,14 +3,10 @@ package com.maks.assetaccounting.vaadin.registration;
 import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.service.user.UserService;
 import com.maks.assetaccounting.vaadin.AppLayoutClass;
-import com.vaadin.flow.component.Key;
+import com.maks.assetaccounting.vaadin.user.UserForm;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,43 +14,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route(value = "sign-up", layout = AppLayoutClass.class)
 @PageTitle("Asset Accounting/Sign Up")
 public class RegistrationView extends VerticalLayout {
+
     private final UserService userService;
-    private final UserDto userDto;
-    private final TextField username;
-    private final PasswordField password;
+    private final UserForm registrationForm;
 
     @Autowired
     public RegistrationView(final UserService userService) {
         this.userService = userService;
-
-        this.userDto = new UserDto();
-
-        this.username = new TextField();
-        username.setPlaceholder("Username");
-        username.setAutofocus(true);
-
-        this.password = new PasswordField();
-        password.setPlaceholder("Password");
-        password.addKeyDownListener(Key.ENTER, event -> register());
+        this.registrationForm = new UserForm(userService);
 
         final Button registrationBtn = new Button("Sign up");
         registrationBtn.getElement().setAttribute("theme", "primary");
-        registrationBtn.addClickListener(e -> register());
+        registrationBtn.addClickListener(e -> {
+            if (registrationForm.getBinder().validate().isOk()) {
+                register();
+            }
+        });
 
-        final FormLayout registrationForm = new FormLayout();
-        registrationForm.add(username, password, registrationBtn);
-
-        final Binder<UserDto> binder = new Binder<>(UserDto.class);
-        binder.bindInstanceFields(this);
-        binder.setBean(userDto);
+        registrationForm.remove(registrationForm.getActive(), registrationForm.getRoles());
+        registrationForm.makeCreateValidation();
+        registrationForm.add(registrationBtn);
+        registrationForm.setUserDto(new UserDto());
 
         setAlignItems(Alignment.CENTER);
+        setSizeFull();
         add(new H3("User registration"), registrationForm);
     }
 
     private void register() {
-        userService.create(userDto);
+        userService.create(registrationForm.getUserDto());
         this.getUI().ifPresent(ui -> ui.getPage()
                 .executeJavaScript("location.assign('sign-in')"));
+        registrationForm.setUserDto(new UserDto());
     }
 }

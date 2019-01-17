@@ -1,6 +1,7 @@
 package com.maks.assetaccounting.vaadin;
 
 import com.maks.assetaccounting.util.SecurityUtil;
+import com.maks.assetaccounting.vaadin.user.UserView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AbstractAppRouterLayout;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -11,6 +12,10 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
 
 public class AppLayoutClass extends AbstractAppRouterLayout {
+
+    public AppLayoutClass() {
+
+    }
 
     @Override
     protected void configure(final AppLayout appLayout, final AppLayoutMenu appLayoutMenu) {
@@ -30,6 +35,10 @@ public class AppLayoutClass extends AbstractAppRouterLayout {
                     "Assets", "assets"));
             setMenuItem(appLayoutMenu, new AppLayoutMenuItem(VaadinIcon.TABLE.create(),
                     "Reports", "reports"));
+            if (SecurityUtil.isAccessGranted(UserView.class)) {
+                setMenuItem(appLayoutMenu, new AppLayoutMenuItem(VaadinIcon.USERS.create(),
+                        "Users", "users"));
+            }
             setMenuItem(appLayoutMenu, new AppLayoutMenuItem(VaadinIcon.SIGN_OUT.create(),
                     "Sign Out", e -> UI.getCurrent().getPage()
                     .executeJavaScript("location.assign('logout')")));
