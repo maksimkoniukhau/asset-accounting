@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.vaadin.company;
+package com.maks.assetaccounting.vaadin.forms;
 
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.company.CompanyService;

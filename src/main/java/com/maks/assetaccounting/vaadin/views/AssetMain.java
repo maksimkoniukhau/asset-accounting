@@ -1,11 +1,11 @@
-package com.maks.assetaccounting.vaadin.asset;
+package com.maks.assetaccounting.vaadin.views;
 
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.service.asset.AssetService;
 import com.maks.assetaccounting.service.company.CompanyService;
-import com.maks.assetaccounting.vaadin.AbstractView;
 import com.maks.assetaccounting.vaadin.components.CancelButton;
-import com.maks.assetaccounting.vaadin.dataprovider.AssetDataProvider;
+import com.maks.assetaccounting.vaadin.dataproviders.AssetDataProvider;
+import com.maks.assetaccounting.vaadin.forms.AssetForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -15,7 +15,7 @@ import com.vaadin.flow.router.Route;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.maks.assetaccounting.vaadin.util.FormatterUtil.DATE_TIME_FORMATTER;
+import static com.maks.assetaccounting.vaadin.utils.FormatterUtil.DATE_TIME_FORMATTER;
 
 @Route
 @Data

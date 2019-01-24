@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.vaadin;
+package com.maks.assetaccounting.vaadin.views;
 
 import com.maks.assetaccounting.dto.AbstractDto;
 import com.maks.assetaccounting.service.CrudService;

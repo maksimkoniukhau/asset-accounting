@@ -1,8 +1,8 @@
-package com.maks.assetaccounting.vaadin.asset;
+package com.maks.assetaccounting.vaadin.forms;
 
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.service.company.CompanyService;
-import com.maks.assetaccounting.vaadin.converter.LocalDateZonedDateTimeConverter;
+import com.maks.assetaccounting.vaadin.converters.LocalDateZonedDateTimeConverter;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextField;

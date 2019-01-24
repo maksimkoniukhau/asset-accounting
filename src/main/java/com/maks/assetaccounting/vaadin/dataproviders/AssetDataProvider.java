@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.vaadin.dataprovider;
+package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.service.asset.AssetService;
@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.maks.assetaccounting.vaadin.util.DataProvidersUtil.getListSortOrders;
+import static com.maks.assetaccounting.vaadin.utils.DataProvidersUtil.getListSortOrders;
 
 @SpringComponent
 @UIScope

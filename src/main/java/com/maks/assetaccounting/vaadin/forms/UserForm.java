@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.vaadin.user;
+package com.maks.assetaccounting.vaadin.forms;
 
 import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.entity.Role;

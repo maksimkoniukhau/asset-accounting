@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.vaadin.util;
+package com.maks.assetaccounting.vaadin.utils;
 
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.SortDirection;

@@ -1,6 +1,6 @@
-package com.maks.assetaccounting.vaadin.report;
+package com.maks.assetaccounting.vaadin.views;
 
-import com.maks.assetaccounting.vaadin.AppLayoutClass;
+import com.maks.assetaccounting.vaadin.components.AppLayoutClass;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H4;

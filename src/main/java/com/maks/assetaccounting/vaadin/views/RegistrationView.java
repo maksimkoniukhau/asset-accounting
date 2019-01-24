@@ -1,9 +1,9 @@
-package com.maks.assetaccounting.vaadin.registration;
+package com.maks.assetaccounting.vaadin.views;
 
 import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.service.user.UserService;
-import com.maks.assetaccounting.vaadin.AppLayoutClass;
-import com.maks.assetaccounting.vaadin.user.UserForm;
+import com.maks.assetaccounting.vaadin.components.AppLayoutClass;
+import com.maks.assetaccounting.vaadin.forms.UserForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

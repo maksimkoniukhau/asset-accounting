@@ -1,7 +1,8 @@
-package com.maks.assetaccounting.vaadin;
+package com.maks.assetaccounting.vaadin.components;
 
 import com.maks.assetaccounting.util.SecurityUtil;
-import com.maks.assetaccounting.vaadin.user.UserView;
+import com.maks.assetaccounting.vaadin.views.MainView;
+import com.maks.assetaccounting.vaadin.views.UserView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AbstractAppRouterLayout;
 import com.vaadin.flow.component.applayout.AppLayout;

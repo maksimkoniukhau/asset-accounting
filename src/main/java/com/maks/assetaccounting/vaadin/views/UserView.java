@@ -1,11 +1,11 @@
-package com.maks.assetaccounting.vaadin.user;
+package com.maks.assetaccounting.vaadin.views;
 
 import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.service.user.UserService;
-import com.maks.assetaccounting.vaadin.AbstractView;
-import com.maks.assetaccounting.vaadin.AppLayoutClass;
+import com.maks.assetaccounting.vaadin.components.AppLayoutClass;
 import com.maks.assetaccounting.vaadin.components.CancelButton;
-import com.maks.assetaccounting.vaadin.dataprovider.UserDataProvider;
+import com.maks.assetaccounting.vaadin.dataproviders.UserDataProvider;
+import com.maks.assetaccounting.vaadin.forms.UserForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;

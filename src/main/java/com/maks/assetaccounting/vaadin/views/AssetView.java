@@ -1,12 +1,13 @@
-package com.maks.assetaccounting.vaadin.asset;
+package com.maks.assetaccounting.vaadin.views;
 
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.asset.AssetService;
 import com.maks.assetaccounting.service.company.CompanyService;
-import com.maks.assetaccounting.vaadin.AppLayoutClass;
-import com.maks.assetaccounting.vaadin.dataprovider.AssetDataProvider;
-import com.maks.assetaccounting.vaadin.dataprovider.CompanyDataProvider;
+import com.maks.assetaccounting.vaadin.components.AppLayoutClass;
+import com.maks.assetaccounting.vaadin.dataproviders.AssetDataProvider;
+import com.maks.assetaccounting.vaadin.dataproviders.CompanyDataProvider;
+import com.maks.assetaccounting.vaadin.forms.AssetForm;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;

@@ -1,4 +1,4 @@
-package com.maks.assetaccounting.vaadin.converter;
+package com.maks.assetaccounting.vaadin.converters;
 
 import com.vaadin.flow.data.binder.Result;
 import com.vaadin.flow.data.binder.ValueContext;

@@ -1,6 +1,6 @@
-package com.maks.assetaccounting.vaadin.login;
+package com.maks.assetaccounting.vaadin.views;
 
-import com.maks.assetaccounting.vaadin.AppLayoutClass;
+import com.maks.assetaccounting.vaadin.components.AppLayoutClass;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
