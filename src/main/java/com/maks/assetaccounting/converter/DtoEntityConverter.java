@@ -1,5 +1,7 @@
 package com.maks.assetaccounting.converter;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,13 @@ public interface DtoEntityConverter<T, E> {
             return dtos.stream()
                     .map(this::convertToEntity)
                     .collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    default Page<T> convertPageToDto(final Page<E> page) {
+        if (page != null) {
+            return page.map(this::convertToDto);
         }
         return null;
     }

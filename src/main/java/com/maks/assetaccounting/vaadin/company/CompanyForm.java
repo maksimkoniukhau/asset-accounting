@@ -1,29 +1,40 @@
 package com.maks.assetaccounting.vaadin.company;
 
 import com.maks.assetaccounting.dto.CompanyDto;
+import com.maks.assetaccounting.service.company.CompanyService;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@SpringComponent
+@UIScope
+@Data
 public class CompanyForm extends FormLayout {
-    private final CompanyMain companyMain;
     private CompanyDto companyDto;
-    private final TextField name = new TextField("Company Name");
-    private final Binder<CompanyDto> binder = new Binder<>(CompanyDto.class);
+    private final TextField name;
+    private final Binder<CompanyDto> binder;
 
-    public CompanyForm(final CompanyMain companyMain) {
-        this.companyMain = companyMain;
-        this.init();
-    }
+    @Autowired
+    public CompanyForm(final CompanyService companyService) {
+        this.name = new TextField("Company Name");
+        name.setPlaceholder("Company name");
 
-    private void init() {
+        this.binder = new Binder<>(CompanyDto.class);
         binder.forField(name)
                 .asRequired("Company Name field is required")
                 .withValidator(name -> name.matches("^.*\\S.*$"),
                         "Company Name must contain at least one non-whitespace character")
+                .withValidator(name -> companyService.getByName(name) == null,
+                        "Company already exists")
                 .bind("name");
-        add(name);
+
         setCompanyDto(null);
+
+        add(name);
     }
 
     public void setCompanyDto(final CompanyDto companyDto) {
@@ -32,23 +43,7 @@ public class CompanyForm extends FormLayout {
         name.focus();
     }
 
-    public void delete() {
-        companyMain.getCompanyService().delete(companyDto.getId());
-        companyMain.updateList();
-        setCompanyDto(null);
-    }
-
-    public void save() {
-        if (companyDto.getId() == null) {
-            companyMain.getCompanyService().create(companyDto);
-        } else {
-            companyMain.getCompanyService().update(companyDto, companyDto.getId());
-        }
-        companyMain.updateList();
-        setCompanyDto(null);
-    }
-
-    public Binder<CompanyDto> getBinder() {
-        return binder;
+    public boolean isValid() {
+        return this.binder.validate().isOk();
     }
 }

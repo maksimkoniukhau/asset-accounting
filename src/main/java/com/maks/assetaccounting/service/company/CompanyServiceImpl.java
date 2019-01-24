@@ -1,16 +1,17 @@
 package com.maks.assetaccounting.service.company;
 
 import com.maks.assetaccounting.converter.CompanyConverter;
-import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.entity.Company;
 import com.maks.assetaccounting.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.maks.assetaccounting.util.ValidationUtil.assureIdConsistent;
 
@@ -60,24 +61,45 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    @Transactional
+    public void deleteAll(final List<CompanyDto> userDtoList) {
+        companyRepository.deleteAll(companyConverter.convertListToEntity(userDtoList));
+    }
+
+    @Override
     public CompanyDto getByName(final String name) {
         return companyConverter.convertToDto(companyRepository.findByName(name));
     }
 
     @Override
-    public List<CompanyDto> getCompaniesWithTheMostAssets() {
-        final List<CompanyDto> companyDtos = getAll();
-        if (companyDtos != null)
-            companyDtos.sort((o1, o2) -> o2.getAssetDtos().size() - o1.getAssetDtos().size());
-        return companyDtos;
+    public Page<CompanyDto> findWithTheMostAssets(final Optional<String> filter, final Pageable pageable) {
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return companyConverter.convertPageToDto(companyRepository
+                    .findWithTheMostAssetsAndNameLikeIgnoreCase(repositoryFilter, pageable));
+        } else {
+            return companyConverter.convertPageToDto(companyRepository.findWithTheMostAssets(pageable));
+        }
     }
 
     @Override
-    public List<CompanyDto> findCompaniesWithAssetsInAscendingOrder() {
-        final List<CompanyDto> companyDtos = getAll();
-        if (companyDtos != null)
-            companyDtos.forEach(companyDto -> companyDto.getAssetDtos()
-                    .sort(Comparator.comparing(AssetDto::getCost)));
-        return companyDtos;
+    public Page<CompanyDto> findAnyMatching(final Optional<String> filter, final Pageable pageable) {
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return companyConverter.convertPageToDto(companyRepository
+                    .findByNameLikeIgnoreCase(repositoryFilter, pageable));
+        } else {
+            return companyConverter.convertPageToDto(companyRepository.findBy(pageable));
+        }
+    }
+
+    @Override
+    public long countAnyMatching(final Optional<String> filter) {
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return companyRepository.countByNameLikeIgnoreCase(repositoryFilter);
+        } else {
+            return companyRepository.count();
+        }
     }
 }

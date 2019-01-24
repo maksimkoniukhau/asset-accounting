@@ -5,6 +5,8 @@ import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.entity.User;
 import com.maks.assetaccounting.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.maks.assetaccounting.util.ValidationUtil.assureIdConsistent;
 
@@ -75,14 +78,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getByName(final String username) {
-        return userConverter.convertToDto(userRepository.findByUsername(username));
-    }
-
-    @Override
     @Transactional
     public void deleteAll(final List<UserDto> userDtoList) {
         userRepository.deleteAll(userConverter.convertListToEntity(userDtoList));
+    }
+
+    @Override
+    public UserDto getByName(final String username) {
+        return userConverter.convertToDto(userRepository.findByUsername(username));
     }
 
     @Override
@@ -92,5 +95,25 @@ public class UserServiceImpl implements UserService {
         userDto.setPassword(passwordEncoder.encode(password));
         final User user = userRepository.save(userConverter.convertToCreateEntity(userDto));
         return userConverter.convertToDto(user);
+    }
+
+    @Override
+    public Page<UserDto> findAnyMatching(final Optional<String> filter, final Pageable pageable) {
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return userConverter.convertPageToDto(userRepository.findByUsernameLikeIgnoreCase(repositoryFilter, pageable));
+        } else {
+            return userConverter.convertPageToDto(userRepository.findBy(pageable));
+        }
+    }
+
+    @Override
+    public long countAnyMatching(final Optional<String> filter) {
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return userRepository.countByUsernameLikeIgnoreCase(repositoryFilter);
+        } else {
+            return userRepository.count();
+        }
     }
 }

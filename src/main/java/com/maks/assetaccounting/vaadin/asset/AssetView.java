@@ -1,77 +1,78 @@
 package com.maks.assetaccounting.vaadin.asset;
 
 import com.maks.assetaccounting.dto.AssetDto;
+import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.asset.AssetService;
 import com.maks.assetaccounting.service.company.CompanyService;
 import com.maks.assetaccounting.vaadin.AppLayoutClass;
+import com.maks.assetaccounting.vaadin.dataprovider.AssetDataProvider;
+import com.maks.assetaccounting.vaadin.dataprovider.CompanyDataProvider;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.maks.assetaccounting.util.ValidationUtil.checkNotFound;
-
 @Route(value = "assets", layout = AppLayoutClass.class)
 @PageTitle("Asset Accounting/Assets")
 public class AssetView extends AssetMain {
 
-    private final TextField generationCompanyName;
-    private final TextField transitionCompanyName;
+    public AssetView(final AssetService assetService, final CompanyService companyService,
+                     final AssetDataProvider assetDataProvider, final CompanyDataProvider companyDataProvider,
+                     final AssetForm assetForm) {
+        super(assetService, companyService, assetDataProvider, assetForm);
 
-    public AssetView(final AssetService assetService, final CompanyService companyService) {
-        super(assetService, companyService);
+        final ComboBox<CompanyDto> companyDtoComboBox = new ComboBox<>();
 
-        final Button addAssetBtn = new Button("Add new asset");
-        addAssetBtn.addClickListener(e -> {
-            getAssetForm().setAssetDto(new AssetDto());
-            getSaveDialog().open();
-        });
-
-        generationCompanyName = new TextField();
-        generationCompanyName.setPlaceholder("Generation for company...");
         final Button generationBtn = new Button("Generation Assets");
+        generationBtn.setEnabled(false);
         generationBtn.addClickListener(e -> {
-            final String value = generationCompanyName.getValue();
-            if (!value.isEmpty() && getCompanyService().getByName(value) != null) {
-                String companyName = generationCompanyName.getValue();
-                getAssetService().generation(checkNotFound(getCompanyService()
-                        .getByName(companyName), "name = " + companyName).getId());
-                generationCompanyName.clear();
-                updateList();
-            }
-
+            assetService.generation(companyDtoComboBox.getValue().getId());
+            companyDtoComboBox.clear();
+            wrapper.refreshAll();
         });
 
-        List<AssetDto> assetDtos = new ArrayList<>();
-        transitionCompanyName = new TextField();
-        transitionCompanyName.setPlaceholder("Transition to company...");
+        final List<AssetDto> assetDtos = new ArrayList<>();
         final Button transitionBtn = new Button("Transition Assets");
+        transitionBtn.setEnabled(false);
         transitionBtn.addClickListener(e -> {
-            final String value = transitionCompanyName.getValue();
-            if (!value.isEmpty() && getCompanyService().getByName(value) != null) {
-                String companyName = transitionCompanyName.getValue();
-                getAssetService().transition(assetDtos, checkNotFound(getCompanyService()
-                        .getByName(companyName), "name = " + companyName).getId());
-                transitionCompanyName.clear();
-                updateList();
+            assetService.transition(assetDtos, companyDtoComboBox.getValue().getId());
+            companyDtoComboBox.clear();
+            wrapper.refreshAll();
+        });
+
+        companyDtoComboBox.setPlaceholder("Company");
+        companyDtoComboBox.setDataProvider(companyDataProvider);
+        companyDtoComboBox.setItemLabelGenerator(CompanyDto::getName);
+        companyDtoComboBox.addValueChangeListener(event -> {
+            if (event.getSource().isEmpty()) {
+                generationBtn.setEnabled(false);
+                transitionBtn.setEnabled(false);
+            } else {
+                generationBtn.setEnabled(true);
+                if (!grid.getSelectedItems().isEmpty()) {
+                    transitionBtn.setEnabled(true);
+                }
             }
         });
 
-        getGrid().setSelectionMode(Grid.SelectionMode.MULTI);
-        getGrid().asMultiSelect()
-                .addSelectionListener(event -> assetDtos.addAll(event.getValue()));
+        grid.asMultiSelect().addSelectionListener(event -> {
+            if (!event.getValue().isEmpty()) {
+                if (companyDtoComboBox.getValue() != null) {
+                    transitionBtn.setEnabled(true);
+                }
+                assetDtos.addAll(event.getValue());
+            } else {
+                transitionBtn.setEnabled(false);
+            }
+        });
 
-        final HorizontalLayout generation = new HorizontalLayout(
-                generationCompanyName, generationBtn);
-        final HorizontalLayout transition = new HorizontalLayout(
-                transitionCompanyName, transitionBtn);
+        final HorizontalLayout transitionGeneration = new HorizontalLayout(
+                companyDtoComboBox, generationBtn, transitionBtn);
 
-        add(generation, transition, addAssetBtn, getGrid());
-        updateList();
+        add(transitionGeneration, grid);
     }
 }

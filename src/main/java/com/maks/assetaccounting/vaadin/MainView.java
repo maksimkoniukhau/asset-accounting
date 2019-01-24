@@ -14,10 +14,6 @@ import com.vaadin.flow.router.Route;
 public class MainView extends VerticalLayout {
 
     public MainView() {
-        this.init();
-    }
-
-    private void init() {
         final Image img = new Image("https://i.imgur.com/LaWFLZf.jpg", "Oracle");
         img.setSizeFull();
         img.setHeight("230px");

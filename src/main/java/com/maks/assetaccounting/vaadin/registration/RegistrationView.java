@@ -19,14 +19,14 @@ public class RegistrationView extends VerticalLayout {
     private final UserForm registrationForm;
 
     @Autowired
-    public RegistrationView(final UserService userService) {
+    public RegistrationView(final UserService userService, final UserForm userForm) {
         this.userService = userService;
-        this.registrationForm = new UserForm(userService);
+        this.registrationForm = userForm;
 
         final Button registrationBtn = new Button("Sign up");
         registrationBtn.getElement().setAttribute("theme", "primary");
         registrationBtn.addClickListener(e -> {
-            if (registrationForm.getBinder().validate().isOk()) {
+            if (registrationForm.isValid()) {
                 register();
             }
         });

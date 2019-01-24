@@ -1,7 +1,6 @@
 package com.maks.assetaccounting.service;
 
 import com.maks.assetaccounting.converter.CompanyConverter;
-import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.entity.Company;
 import com.maks.assetaccounting.repository.CompanyRepository;
@@ -12,11 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -90,35 +87,5 @@ public class CompanyServiceImplTest {
         verify(companyRepository, times(1)).findById(anyLong());
         verify(companyRepository, times(1)).deleteById(anyLong());
         verify(companyConverter, times(1)).convertToDto(any(Company.class));
-    }
-
-    @Test
-    public void testFindCompaniesWithAssetsInAscendingOrderIncludingTestGetAll() {
-        final List<CompanyDto> companies = new ArrayList<>();
-
-        final CompanyDto dto = new CompanyDto();
-        final AssetDto assetDto = new AssetDto();
-        assetDto.setCost(55);
-        final AssetDto assetDto1 = new AssetDto();
-        assetDto1.setCost(33);
-        final List<AssetDto> list = new ArrayList<>();
-        list.add(assetDto);
-        list.add(assetDto1);
-        dto.setAssetDtos(list);
-
-        companies.add(dto);
-
-        when(companyRepository.findAll()).thenReturn(null);
-        when(companyConverter.convertListToDto(any())).thenReturn(companies);
-
-        final List<CompanyDto> returnList = companyServiceImpl.findCompaniesWithAssetsInAscendingOrder();
-
-        assertEquals(companies, returnList);
-        assertEquals(1, returnList.size());
-        assertTrue(returnList.contains(dto));
-        assertNotEquals(returnList.get(0).getAssetDtos().get(0), assetDto);
-
-        verify(companyRepository, times(1)).findAll();
-        verify(companyConverter, times(1)).convertListToDto(any());
     }
 }

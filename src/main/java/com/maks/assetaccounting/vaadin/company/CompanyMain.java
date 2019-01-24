@@ -1,133 +1,113 @@
 package com.maks.assetaccounting.vaadin.company;
 
-import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.dto.CompanyDto;
+import com.maks.assetaccounting.service.asset.AssetService;
 import com.maks.assetaccounting.service.company.CompanyService;
+import com.maks.assetaccounting.vaadin.AbstractView;
+import com.maks.assetaccounting.vaadin.asset.AssetForm;
+import com.maks.assetaccounting.vaadin.asset.AssetView;
+import com.maks.assetaccounting.vaadin.components.CancelButton;
+import com.maks.assetaccounting.vaadin.dataprovider.AssetDataProvider;
+import com.maks.assetaccounting.vaadin.dataprovider.CompanyDataProvider;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouterLayout;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-import static com.maks.assetaccounting.vaadin.util.FormatterUtil.DATE_TIME_FORMATTER;
-
 @Route
 @Data
-public class CompanyMain extends VerticalLayout implements RouterLayout {
+public class CompanyMain extends AbstractView<CompanyDto> {
     private final CompanyService companyService;
+    private final CompanyForm companyForm;
+    private final Dialog saveDialog;
 
-    private final CompanyForm companyForm = new CompanyForm(this);
-    private final Grid<CompanyDto> grid = new Grid<>();
-    private final TextField filterByName = new TextField();
-    private final Dialog saveDialog = new Dialog();
+    private final AssetService assetService;
+    private final CompanyDataProvider companyDataProvider;
+    private final AssetDataProvider assetDataProvider;
 
     @Autowired
-    public CompanyMain(final CompanyService companyService) {
-        this.companyService = companyService;
-        this.init();
-    }
+    public CompanyMain(final CompanyService companyService, final CompanyDataProvider companyDataProvider,
+                       final CompanyForm companyForm, final AssetService assetService,
+                       final AssetDataProvider assetDataProvider) {
+        super(companyDataProvider.withConfigurableFilter(), companyService, new Grid<>());
 
-    private void init() {
-        final Dialog deleteDialog = new Dialog(new H4("Are you sure?"));
+        this.companyService = companyService;
+        this.companyForm = companyForm;
+        this.saveDialog = new Dialog();
+
+        this.assetService = assetService;
+        this.companyDataProvider = companyDataProvider;
+        this.assetDataProvider = assetDataProvider;
+
+        addBtn.setText("New company");
+        addBtn.addClickListener(e -> {
+            companyForm.setCompanyDto(new CompanyDto());
+            getSaveDialog().open();
+        });
 
         final Button saveButton = new Button("Save", new Icon(VaadinIcon.ENVELOPE_OPEN));
         saveButton.getElement().setAttribute("theme", "primary");
         saveButton.addClickListener(event -> {
-            if (companyForm.getBinder().validate().isOk()) {
-                companyForm.save();
+            if (companyForm.isValid()) {
+                save();
                 saveDialog.close();
             }
         });
 
-        final Button deleteButton = new Button("Delete", new Icon(VaadinIcon.TRASH));
-        deleteButton.addClickListener(event -> {
-            companyForm.delete();
-            deleteDialog.close();
-        });
-
-        final Button cancelSaveBtn = new Button("Cancel", new Icon(VaadinIcon.CLOSE));
-        cancelSaveBtn.addClickListener(event -> saveDialog.close());
-
-        final Button cancelDelBtn = new Button("Cancel", new Icon(VaadinIcon.CLOSE));
-        cancelDelBtn.getElement().setAttribute("theme", "primary");
-        cancelDelBtn.addClickListener(event -> deleteDialog.close());
-
         saveDialog.setWidth("400px");
-        saveDialog.add(companyForm);
-        saveDialog.add(saveButton, cancelSaveBtn);
+        saveDialog.add(companyForm, saveButton, new CancelButton(saveDialog, null));
+    }
 
-        deleteDialog.setWidth("400px");
-        deleteDialog.add(deleteButton, cancelDelBtn);
-
-        filterByName.setPlaceholder("Filter by name...");
-        filterByName.addValueChangeListener(e -> updateList());
-        final Button clearFilterTextBtn = new Button(new Icon(VaadinIcon.CLOSE_CIRCLE));
-        clearFilterTextBtn.addClickListener(e -> filterByName.clear());
-        final HorizontalLayout filtering = new HorizontalLayout(filterByName, clearFilterTextBtn);
-
-        grid.setSizeFull();
+    @Override
+    protected void setupGrid(final Grid<CompanyDto> grid) {
         grid.addColumn(CompanyDto::getId).setHeader("Company Id").setVisible(false);
-        grid.addColumn(CompanyDto::getName).setSortable(true).setHeader("Company Name");
+        grid.addColumn(CompanyDto::getName).setSortProperty("name").setHeader("Company Name");
         grid.addComponentColumn(companyDto -> {
             final Dialog assetListDialog = new Dialog();
-            final Grid<AssetDto> assetGrid = new Grid<>();
-            assetGrid.addColumn(AssetDto::getName).setHeader("Asset Name");
-            assetGrid.addColumn(assetDto -> assetDto.getCreationDate()
-                    .format(DATE_TIME_FORMATTER)).setHeader("Creation Date");
-            assetGrid.addColumn(assetDto -> assetDto.getTransferDate()
-                    .format(DATE_TIME_FORMATTER)).setHeader("Transfer Date");
-            assetGrid.addColumn(AssetDto::getCost).setHeader("Cost");
-            assetGrid.addColumn(AssetDto::getCompanyName).setHeader("Company Name");
-            assetGrid.setSizeFull();
-            assetGrid.setItems(companyDto.getAssetDtos());
-            assetListDialog.add(assetGrid);
-            assetListDialog.setWidth("800px");
+            final AssetView assetView = new AssetView(assetService, companyService, assetDataProvider,
+                    companyDataProvider, new AssetForm(companyService));
+            assetListDialog.add(assetView);
+            assetListDialog.setWidth("1200px");
             assetListDialog.setHeight("600px");
+            assetListDialog.addDialogCloseActionListener(event -> {
+                assetDataProvider.setCompanyName(null);
+                assetListDialog.close();
+            });
             final Button assetsBtn = new Button("Asset List");
-            assetsBtn.addClickListener(event -> assetListDialog.open());
-            assetsBtn.getStyle().set("background-color", "white");
+            assetsBtn.addClickListener(event -> {
+                assetDataProvider.setCompanyName(companyDto.getName());
+                assetListDialog.open();
+            });
+            assetsBtn.getStyle().set("background-color", "transparent");
             return assetsBtn;
         }).setHeader("Company Assets");
         grid.addComponentColumn(companyDto -> {
-            final Button edit = new Button("Edit");
+            final Button edit = new Button();
+            edit.setIcon(VaadinIcon.EDIT.create());
             edit.addClickListener(event -> {
                 companyForm.setCompanyDto(companyDto);
                 saveDialog.open();
             });
             return edit;
-        });
-        grid.addComponentColumn(companyDto -> {
-            final Button delete = new Button("Delete");
-            delete.addClickListener(event -> {
-                companyForm.setCompanyDto(companyDto);
-                deleteDialog.open();
-            });
-            return delete;
-        });
+        }).setWidth("1px");
 
-        add(filtering);
-        setHeight("90vh");
+        grid.setWidth("1100px");
     }
 
-    public void updateList() {
-        final String filterString = filterByName.getValue();
-        if (filterString != null && !filterString.isEmpty()) {
-            final CompanyDto companyDto = companyService.getByName(filterString);
-            if (companyDto != null) grid.setItems(companyDto);
+    public void save() {
+        final CompanyDto companyDto = companyForm.getCompanyDto();
+        if (companyDto.getId() == null) {
+            companyService.create(companyDto);
+            wrapper.refreshAll();
         } else {
-            final List<CompanyDto> companyDtos = companyService.getAll();
-            if (companyDtos != null)
-                grid.setItems(companyDtos);
+            companyService.update(companyDto, companyDto.getId());
+            wrapper.refreshItem(companyDto);
         }
+        companyForm.setCompanyDto(null);
     }
 }
+

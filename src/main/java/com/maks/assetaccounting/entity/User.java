@@ -17,7 +17,7 @@ import java.util.Set;
 @Entity
 @Data
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Table(name = "users")
 public class User extends AbstractEntity implements UserDetails {
     @NotBlank

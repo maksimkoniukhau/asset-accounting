@@ -3,44 +3,67 @@ package com.maks.assetaccounting.vaadin.report;
 import com.maks.assetaccounting.service.asset.AssetService;
 import com.maks.assetaccounting.service.company.CompanyService;
 import com.maks.assetaccounting.vaadin.AppLayoutClass;
+import com.maks.assetaccounting.vaadin.asset.AssetForm;
 import com.maks.assetaccounting.vaadin.asset.AssetMain;
-import com.vaadin.flow.component.button.Button;
+import com.maks.assetaccounting.vaadin.dataprovider.AssetDataProvider;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Route(value = "reports/assets", layout = AppLayoutClass.class)
 @PageTitle("Asset Accounting/Reports/Assets")
 public class AssetReports extends AssetMain {
 
+    private final AssetDataProvider assetDataProvider;
     private final H4 assetH4 = new H4("Asset List");
 
-    public AssetReports(final AssetService assetService, final CompanyService companyService) {
-        super(assetService, companyService);
+    public AssetReports(final AssetService assetService, final CompanyService companyService,
+                        final AssetDataProvider assetDataProvider, final AssetForm assetForm) {
+        super(assetService, companyService, assetDataProvider, assetForm);
 
-        final Button marketableBtn = new Button("Get Marketable Assets");
-        marketableBtn.addClickListener(event -> getMarketableAssets());
-        final Button expensiveBtn = new Button("Get Expensive And Marketable Assets");
-        expensiveBtn.addClickListener(event -> getExpensiveAndMarketableAssets());
+        this.assetDataProvider = assetDataProvider;
 
-        add(marketableBtn, expensiveBtn, assetH4, getGrid());
-        updateList();
+        final ComboBox<String> reportsComboBox = new ComboBox<>("Reports");
+        reportsComboBox.setPlaceholder("Reports");
+        reportsComboBox.setItems("Marketable", "Expensive And Marketable");
+        reportsComboBox.addValueChangeListener(event -> {
+            if (event.getSource().isEmpty()) {
+                assetDataProvider.setSortOrder(null);
+                assetH4.setText("Asset List");
+                wrapper.refreshAll();
+            } else {
+                switch (event.getValue()) {
+                    case "Marketable":
+                        getMarketable();
+                        break;
+                    case "Expensive And Marketable":
+                        getExpensiveAndMarketable();
+                        break;
+                }
+            }
+        });
+
+        add(reportsComboBox, assetH4, grid);
     }
 
-    private void getMarketableAssets() {
-        clearFilters();
-        getGrid().setItems(getAssetService().getMarketable());
+    private void getMarketable() {
+        assetDataProvider.setSortOrder(new QuerySortOrder("numberOfTransition", SortDirection.DESCENDING));
         assetH4.setText("Marketable Assets");
+        wrapper.refreshAll();
     }
 
-    private void getExpensiveAndMarketableAssets() {
-        clearFilters();
-        getGrid().setItems(getAssetService().getExpensiveAndMarketable());
+    private void getExpensiveAndMarketable() {
+        final List<QuerySortOrder> sortOrders = Arrays
+                .asList(new QuerySortOrder("cost", SortDirection.DESCENDING),
+                        new QuerySortOrder("numberOfTransition", SortDirection.DESCENDING));
+        assetDataProvider.setSortOrders(sortOrders);
         assetH4.setText("Expensive And Marketable Assets");
-    }
-
-    private void clearFilters() {
-        getFilterByName().clear();
-        getFilterByCompanyName().clear();
+        wrapper.refreshAll();
     }
 }

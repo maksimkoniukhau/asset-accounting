@@ -1,7 +1,6 @@
 package com.maks.assetaccounting.controller;
 
 import com.maks.assetaccounting.dto.AssetDto;
-import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.asset.AssetService;
 import com.maks.assetaccounting.service.company.CompanyService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +23,6 @@ public class ReportController {
     public ReportController(final CompanyService companyService, final AssetService assetService) {
         this.companyService = companyService;
         this.assetService = assetService;
-    }
-
-    @GetMapping("company")
-    public List<CompanyDto> getCompaniesWithAssetsInAscendingOrder() {
-        log.info("get companies with assets in ascending order");
-        return companyService.findCompaniesWithAssetsInAscendingOrder();
     }
 
     @GetMapping("asset/marketable")

@@ -11,10 +11,14 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.validator.EmailValidator;
+import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Data;
 
 import java.util.Arrays;
 
+@SpringComponent
+@UIScope
 @Data
 public class UserForm extends FormLayout {
     private final UserService userService;
@@ -102,5 +106,9 @@ public class UserForm extends FormLayout {
                 .withValidator(pass -> pass.matches("^.*\\S.*$"),
                         "Password must contain at least one non-whitespace character")
                 .bind("password");
+    }
+
+    public boolean isValid() {
+        return this.binder.validate().isOk();
     }
 }

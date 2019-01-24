@@ -7,12 +7,15 @@ import com.maks.assetaccounting.entity.Company;
 import com.maks.assetaccounting.repository.AssetRepository;
 import com.maks.assetaccounting.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.maks.assetaccounting.util.ValidationUtil.assureIdConsistent;
 import static com.maks.assetaccounting.util.ValidationUtil.checkNotFound;
@@ -68,15 +71,40 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    @Transactional
+    public void deleteAll(final List<AssetDto> userDtoList) {
+        assetRepository.deleteAll(assetConverter.convertListToEntity(userDtoList));
+    }
+
+    @Override
     public List<AssetDto> getAllByName(final String name) {
         return assetConverter.convertListToDto(assetRepository.findAllByName(name));
     }
 
     @Override
-    public List<AssetDto> getAllByCompanyName(final String companyName) {
+    public Page<AssetDto> getAllByCompanyName(final Optional<String> filter, final String companyName,
+                                              final Pageable pageable) {
         final Company company = companyRepository.findByName(companyName);
-        return assetConverter.convertListToDto(assetRepository
-                .findAllByCompany(checkNotFound(company, "name " + companyName)));
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return assetConverter.convertPageToDto(assetRepository
+                    .findByCompanyAndNameLikeIgnoreCase(checkNotFound(company, "name " + companyName),
+                            repositoryFilter, pageable));
+        } else {
+            return assetConverter.convertPageToDto(assetRepository.findByCompany(company, pageable));
+        }
+    }
+
+    @Override
+    public int countByCompanyName(final Optional<String> filter, final String companyName) {
+        final Company company = companyRepository.findByName(companyName);
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return assetRepository.countByCompanyAndNameLikeIgnoreCase(
+                    checkNotFound(company, "name " + companyName), repositoryFilter);
+        } else {
+            return assetRepository.countByCompany(company);
+        }
     }
 
     @Override
@@ -117,5 +145,25 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public List<AssetDto> getExpensiveAndMarketable() {
         return assetConverter.convertListToDto(assetRepository.findFirst50ByOrderByCostDescNumberOfTransitionDesc());
+    }
+
+    @Override
+    public Page<AssetDto> findAnyMatching(final Optional<String> filter, final Pageable pageable) {
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return assetConverter.convertPageToDto(assetRepository.findByNameLikeIgnoreCase(repositoryFilter, pageable));
+        } else {
+            return assetConverter.convertPageToDto(assetRepository.findBy(pageable));
+        }
+    }
+
+    @Override
+    public long countAnyMatching(final Optional<String> filter) {
+        if (filter.isPresent()) {
+            String repositoryFilter = "%" + filter.get() + "%";
+            return assetRepository.countByNameLikeIgnoreCase(repositoryFilter);
+        } else {
+            return assetRepository.count();
+        }
     }
 }
