@@ -9,7 +9,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public class LocalDateZonedDateTimeConverter implements Converter<LocalDate, ZonedDateTime> {
+public class LocalDateToZonedDateTimeConverter implements Converter<LocalDate, ZonedDateTime> {
 
     @Override
     public Result<ZonedDateTime> convertToModel(final LocalDate value, final ValueContext context) {

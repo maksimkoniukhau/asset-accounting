@@ -68,7 +68,7 @@ public class CompanyMain extends AbstractView<CompanyDto> {
         grid.addComponentColumn(companyDto -> {
             final Dialog assetListDialog = new Dialog();
             final AssetView assetView = new AssetView(assetService, companyService, assetDataProvider,
-                    companyDataProvider, new AssetForm(companyService));
+                    companyDataProvider, new AssetForm(companyService, companyDataProvider));
             assetListDialog.add(assetView);
             assetListDialog.setWidth("1200px");
             assetListDialog.setHeight("600px");

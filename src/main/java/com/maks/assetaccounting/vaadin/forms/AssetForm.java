@@ -1,8 +1,12 @@
 package com.maks.assetaccounting.vaadin.forms;
 
 import com.maks.assetaccounting.dto.AssetDto;
+import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.company.CompanyService;
-import com.maks.assetaccounting.vaadin.converters.LocalDateZonedDateTimeConverter;
+import com.maks.assetaccounting.vaadin.converters.CompanyDtoToStringConverter;
+import com.maks.assetaccounting.vaadin.converters.LocalDateToZonedDateTimeConverter;
+import com.maks.assetaccounting.vaadin.dataproviders.CompanyDataProvider;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -20,18 +24,20 @@ public class AssetForm extends FormLayout {
     private final TextField name;
     private final DatePicker transferDate;
     private final TextField cost;
-    private final TextField companyName;
+    private final ComboBox<CompanyDto> companyName;
     private final Binder<AssetDto> binder;
 
-    public AssetForm(final CompanyService companyService) {
+    public AssetForm(final CompanyService companyService, final CompanyDataProvider companyDataProvider) {
         this.name = new TextField("Asset Name");
         name.setPlaceholder("Asset name");
         this.transferDate = new DatePicker("Transfer Date");
         transferDate.setPlaceholder("Transfer date");
         this.cost = new TextField("Asset Cost");
         cost.setPlaceholder("Cost");
-        this.companyName = new TextField("Company Name");
-        companyName.setPlaceholder("Company name");
+        this.companyName = new ComboBox<>("Company");
+        companyName.setPlaceholder("Company");
+        companyName.setDataProvider(companyDataProvider);
+        companyName.setItemLabelGenerator(CompanyDto::getName);
 
         this.binder = new Binder<>(AssetDto.class);
         binder.forField(name)
@@ -41,16 +47,15 @@ public class AssetForm extends FormLayout {
                 .bind("name");
         binder.forField(transferDate)
                 .asRequired("Transfer Date field is required")
-                .withConverter(new LocalDateZonedDateTimeConverter())
+                .withConverter(new LocalDateToZonedDateTimeConverter())
                 .bind("transferDate");
         binder.forField(cost)
                 .asRequired("Asset Cost field is required")
                 .withConverter(new StringToDoubleConverter("Must enter a number"))
                 .bind("cost");
         binder.forField(companyName)
-                .asRequired("Company Name field is required")
-                .withValidator(name -> companyService
-                        .getByName(name) != null, "No exists such company")
+                .asRequired("Company field is required")
+                .withConverter(new CompanyDtoToStringConverter(companyService))
                 .bind("companyName");
 
         setAssetDto(null);
