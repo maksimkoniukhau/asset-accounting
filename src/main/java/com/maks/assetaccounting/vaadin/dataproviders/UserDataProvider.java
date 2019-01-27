@@ -2,22 +2,22 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.service.user.UserService;
-import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.vaadin.artur.spring.dataprovider.FilterablePageableDataProvider;
 
 import java.util.List;
-import java.util.stream.Stream;
 
-import static com.maks.assetaccounting.vaadin.utils.DataProvidersUtil.getListSortOrders;
+import static com.maks.assetaccounting.vaadin.utils.DataProvidersUtil.DEFAULT_SORT_ORDERS;
 
 @SpringComponent
 @UIScope
-public class UserDataProvider extends AbstractBackEndDataProvider<UserDto, String> {
+public class UserDataProvider extends FilterablePageableDataProvider<UserDto, String> {
 
     private final UserService userService;
 
@@ -27,12 +27,13 @@ public class UserDataProvider extends AbstractBackEndDataProvider<UserDto, Strin
     }
 
     @Override
-    protected Stream<UserDto> fetchFromBackEnd(final Query<UserDto, String> query) {
-        final List<Sort.Order> sortOrders = getListSortOrders(query);
+    protected Page<UserDto> fetchFromBackEnd(final Query<UserDto, String> query, final Pageable pageable) {
+        return userService.findAnyMatching(query.getFilter(), pageable);
+    }
 
-        return userService.findAnyMatching(query.getFilter(),
-                PageRequest.of(query.getOffset(), query.getLimit(), Sort.by(sortOrders)))
-                .stream();
+    @Override
+    protected List<QuerySortOrder> getDefaultSortOrders() {
+        return DEFAULT_SORT_ORDERS;
     }
 
     @Override

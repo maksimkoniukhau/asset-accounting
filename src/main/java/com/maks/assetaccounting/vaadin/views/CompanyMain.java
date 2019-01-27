@@ -32,7 +32,7 @@ public class CompanyMain extends AbstractView<CompanyDto> {
     public CompanyMain(final CompanyService companyService, final CompanyDataProvider companyDataProvider,
                        final CompanyForm companyForm, final AssetService assetService,
                        final AssetDataProvider assetDataProvider) {
-        super(companyDataProvider.withConfigurableFilter(), companyService, new Grid<>());
+        super(companyDataProvider, companyService, new Grid<>());
 
         this.companyService = companyService;
         this.companyForm = companyForm;
@@ -101,11 +101,10 @@ public class CompanyMain extends AbstractView<CompanyDto> {
         final CompanyDto companyDto = companyForm.getCompanyDto();
         if (companyDto.getId() == null) {
             companyService.create(companyDto);
-            wrapper.refreshAll();
         } else {
             companyService.update(companyDto, companyDto.getId());
-            wrapper.refreshItem(companyDto);
         }
+        dataProvider.refreshAll();
         companyForm.setCompanyDto(null);
     }
 }

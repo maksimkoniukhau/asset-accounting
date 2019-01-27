@@ -35,7 +35,7 @@ public class AssetReports extends AssetMain {
             if (event.getSource().isEmpty()) {
                 assetDataProvider.setSortOrder(null);
                 assetH4.setText("Asset List");
-                wrapper.refreshAll();
+                dataProvider.refreshAll();
             } else {
                 switch (event.getValue()) {
                     case "Marketable":
@@ -54,7 +54,7 @@ public class AssetReports extends AssetMain {
     private void getMarketable() {
         assetDataProvider.setSortOrder(new QuerySortOrder("numberOfTransition", SortDirection.DESCENDING));
         assetH4.setText("Marketable Assets");
-        wrapper.refreshAll();
+        dataProvider.refreshAll();
     }
 
     private void getExpensiveAndMarketable() {
@@ -63,6 +63,6 @@ public class AssetReports extends AssetMain {
                         new QuerySortOrder("numberOfTransition", SortDirection.DESCENDING));
         assetDataProvider.setSortOrders(sortOrders);
         assetH4.setText("Expensive And Marketable Assets");
-        wrapper.refreshAll();
+        dataProvider.refreshAll();
     }
 }

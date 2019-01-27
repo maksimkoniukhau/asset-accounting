@@ -27,7 +27,7 @@ public class AssetMain extends AbstractView<AssetDto> {
     @Autowired
     public AssetMain(final AssetService assetService, final CompanyService companyService,
                      final AssetDataProvider assetDataProvider, final AssetForm assetForm) {
-        super(assetDataProvider.withConfigurableFilter(), assetService, new Grid<>());
+        super(assetDataProvider, assetService, new Grid<>());
 
         this.assetService = assetService;
         this.assetForm = assetForm;
@@ -80,10 +80,10 @@ public class AssetMain extends AbstractView<AssetDto> {
         final AssetDto assetDto = assetForm.getAssetDto();
         if (assetDto.getId() == null) {
             assetService.create(assetDto);
-            wrapper.refreshAll();
+            dataProvider.refreshAll();
         } else {
             assetService.update(assetDto, assetDto.getId());
-            wrapper.refreshItem(assetDto);
+            dataProvider.refreshItem(assetDto);
         }
         assetForm.setAssetDto(null);
     }

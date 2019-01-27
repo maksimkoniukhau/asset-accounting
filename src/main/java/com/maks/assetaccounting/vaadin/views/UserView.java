@@ -32,7 +32,7 @@ public class UserView extends AbstractView<UserDto> {
 
     @Autowired
     public UserView(final UserService userService, final UserDataProvider userDataProvider) {
-        super(userDataProvider.withConfigurableFilter(), userService, new Grid<>());
+        super(userDataProvider, userService, new Grid<>());
 
         this.userService = userService;
         this.createUserForm = new UserForm(userService);
@@ -160,20 +160,19 @@ public class UserView extends AbstractView<UserDto> {
 
     private void update() {
         UserDto userDto = userService.update(editUserForm.getUserDto(), editUserForm.getUserDto().getId());
-        wrapper.refreshItem(userDto);
+        dataProvider.refreshItem(userDto);
         editUserForm.setUserDto(null);
     }
 
     private void create() {
         userService.create(createUserForm.getUserDto());
-        wrapper.refreshAll();
+        dataProvider.refreshAll();
         createUserForm.setUserDto(null);
     }
 
     private void changePassword() {
-        UserDto userDto = userService.changeUserPassword(changePassUserDto, changePassUserDto.getId(),
-                changePassUserDto.getPassword());
-        wrapper.refreshItem(userDto);
+        userService.changeUserPassword(changePassUserDto, changePassUserDto.getId(), changePassUserDto.getPassword());
+        dataProvider.refreshAll();
         changePasswordForm.setUserDto(null);
         grid.deselectAll();
     }

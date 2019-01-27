@@ -17,7 +17,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query(value = "SELECT * FROM company c ORDER BY (select count(a.company_id) from asset a where a.company_id = c.id) DESC", nativeQuery = true)
     Page<Company> findWithTheMostAssets(final Pageable page);
 
-    @Query(value = "SELECT * FROM company c WHERE c.name LIKE ?1 ORDER BY (select count(a.company_id) from asset a where a.company_id = c.id) DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM company c WHERE UPPER(c.name) LIKE UPPER(?1) ORDER BY (select count(a.company_id) from asset a where a.company_id = c.id) DESC", nativeQuery = true)
     Page<Company> findWithTheMostAssetsAndNameLikeIgnoreCase(final String name, final Pageable page);
 
     int countByNameLikeIgnoreCase(final String name);

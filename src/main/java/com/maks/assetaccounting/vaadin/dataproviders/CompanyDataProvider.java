@@ -2,24 +2,24 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.company.CompanyService;
-import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
 import com.vaadin.flow.data.provider.Query;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.vaadin.artur.spring.dataprovider.FilterablePageableDataProvider;
 
 import java.util.List;
-import java.util.stream.Stream;
 
-import static com.maks.assetaccounting.vaadin.utils.DataProvidersUtil.getListSortOrders;
+import static com.maks.assetaccounting.vaadin.utils.DataProvidersUtil.DEFAULT_SORT_ORDERS;
 
 @SpringComponent
 @UIScope
 @Data
-public class CompanyDataProvider extends AbstractBackEndDataProvider<CompanyDto, String> {
+public class CompanyDataProvider extends FilterablePageableDataProvider<CompanyDto, String> {
 
     private final CompanyService companyService;
     private String reportFilter;
@@ -30,23 +30,22 @@ public class CompanyDataProvider extends AbstractBackEndDataProvider<CompanyDto,
     }
 
     @Override
-    protected Stream<CompanyDto> fetchFromBackEnd(final Query<CompanyDto, String> query) {
-        final List<Sort.Order> sortOrders = getListSortOrders(query);
-        final PageRequest pageRequest = PageRequest.of(query.getOffset(), query.getLimit(), Sort.by(sortOrders));
-
+    protected Page<CompanyDto> fetchFromBackEnd(final Query<CompanyDto, String> query, final Pageable pageable) {
         if (reportFilter != null) {
             switch (reportFilter) {
                 case "Most Assets":
-                    return companyService.findWithTheMostAssets(query.getFilter(), pageRequest)
-                            .stream();
+                    return companyService.findWithTheMostAssets(query.getFilter(), pageable);
                 default:
-                    return companyService.findAnyMatching(query.getFilter(), pageRequest)
-                            .stream();
+                    return companyService.findAnyMatching(query.getFilter(), pageable);
             }
         } else {
-            return companyService.findAnyMatching(query.getFilter(), pageRequest)
-                    .stream();
+            return companyService.findAnyMatching(query.getFilter(), pageable);
         }
+    }
+
+    @Override
+    protected List<QuerySortOrder> getDefaultSortOrders() {
+        return DEFAULT_SORT_ORDERS;
     }
 
     @Override

@@ -29,7 +29,7 @@ public class CompanyReports extends CompanyMain {
                 companyDataProvider.setSortOrder(null);
                 companyH4.setText("Company List");
                 companyDataProvider.setReportFilter(null);
-                wrapper.refreshAll();
+                dataProvider.refreshAll();
             } else {
                 switch (event.getValue()) {
                     case "Most Assets":
@@ -45,6 +45,6 @@ public class CompanyReports extends CompanyMain {
     private void getWithTheMostAssets() {
         getCompanyDataProvider().setReportFilter("Most Assets");
         companyH4.setText("Companies With The Most Assets");
-        wrapper.refreshAll();
+        dataProvider.refreshAll();
     }
 }

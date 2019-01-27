@@ -1,22 +1,14 @@
 package com.maks.assetaccounting.vaadin.utils;
 
-import com.vaadin.flow.data.provider.Query;
-import com.vaadin.flow.data.provider.SortDirection;
-import org.springframework.data.domain.Sort;
+import com.vaadin.flow.data.provider.QuerySortOrder;
+import com.vaadin.flow.data.provider.QuerySortOrderBuilder;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DataProvidersUtil {
 
     private DataProvidersUtil() {
     }
 
-    public static <T, F> List<Sort.Order> getListSortOrders(final Query<T, F> query) {
-        return query.getSortOrders().stream()
-                .map(sortOrder -> new Sort.Order(sortOrder.getDirection() == SortDirection.ASCENDING ?
-                        Sort.Direction.ASC : Sort.Direction.DESC,
-                        sortOrder.getSorted()))
-                .collect(Collectors.toList());
-    }
+    public static final List<QuerySortOrder> DEFAULT_SORT_ORDERS = new QuerySortOrderBuilder().thenAsc("id").build();
 }

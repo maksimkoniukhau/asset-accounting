@@ -33,7 +33,7 @@ public class AssetView extends AssetMain {
         generationBtn.addClickListener(e -> {
             assetService.generation(companyDtoComboBox.getValue().getId());
             companyDtoComboBox.clear();
-            wrapper.refreshAll();
+            dataProvider.refreshAll();
         });
 
         final List<AssetDto> assetDtos = new ArrayList<>();
@@ -42,7 +42,7 @@ public class AssetView extends AssetMain {
         transitionBtn.addClickListener(e -> {
             assetService.transition(assetDtos, companyDtoComboBox.getValue().getId());
             companyDtoComboBox.clear();
-            wrapper.refreshAll();
+            dataProvider.refreshAll();
         });
 
         companyDtoComboBox.setPlaceholder("Company");

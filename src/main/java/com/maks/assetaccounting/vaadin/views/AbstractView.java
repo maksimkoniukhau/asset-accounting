@@ -6,31 +6,30 @@ import com.maks.assetaccounting.vaadin.components.CancelButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import org.vaadin.artur.spring.dataprovider.FilterablePageableDataProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout {
 
-    protected final ConfigurableFilterDataProvider<T, Void, String> wrapper;
+    protected final FilterablePageableDataProvider<T, String> dataProvider;
     private final TextField filterByName;
     protected final Button addBtn;
     private final Button deleteBtn;
     protected final Grid<T> grid;
     private final CrudService<T, T> service;
 
-    public AbstractView(final ConfigurableFilterDataProvider<T, Void, String> wrapper,
+    public AbstractView(final FilterablePageableDataProvider<T, String> dataProvider,
                         final CrudService<T, T> service, final Grid<T> grid) {
-        this.wrapper = wrapper;
+        this.dataProvider = dataProvider;
         this.grid = grid;
         this.service = service;
 
@@ -38,14 +37,7 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
         filterByName.setPlaceholder("Filter by name...");
         filterByName.setValueChangeMode(ValueChangeMode.EAGER);
 
-        filterByName.addValueChangeListener(e -> {
-            String filter = e.getValue();
-            if (filter.trim().isEmpty()) {
-                // null disables filtering
-                filter = null;
-            }
-            wrapper.setFilter(filter);
-        });
+        filterByName.addValueChangeListener(e -> dataProvider.setFilter(e.getValue()));
 
         final Button clearFilterByNameBtn = new Button(new Icon(VaadinIcon.CLOSE_CIRCLE));
         clearFilterByNameBtn.addClickListener(e -> filterByName.clear());
@@ -78,7 +70,7 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
         });
 //        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.setMultiSort(true);
-        grid.setDataProvider(wrapper);
+        grid.setDataProvider(dataProvider);
         grid.setSizeFull();
         grid.getStyle().set("margin", "auto");
         setupGrid(grid);
@@ -95,7 +87,7 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
     private void delete() {
         List<T> dtoList = new ArrayList<>(grid.getSelectedItems());
         service.deleteAll(dtoList);
-        wrapper.refreshAll();
+        dataProvider.refreshAll();
         grid.deselectAll();
     }
 }
