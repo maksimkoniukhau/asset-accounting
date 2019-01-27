@@ -13,13 +13,18 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = "assets", layout = AppLayoutClass.class)
 @PageTitle("Asset Accounting/Assets")
+@Data
 public class AssetView extends AssetMain {
+
+    private final HorizontalLayout transitionGeneration;
+    private final Button generationBtn;
 
     public AssetView(final AssetService assetService, final CompanyService companyService,
                      final AssetDataProvider assetDataProvider, final CompanyDataProvider companyDataProvider,
@@ -28,7 +33,7 @@ public class AssetView extends AssetMain {
 
         final ComboBox<CompanyDto> companyDtoComboBox = new ComboBox<>();
 
-        final Button generationBtn = new Button("Generation Assets");
+        this.generationBtn = new Button("Generation Assets");
         generationBtn.setEnabled(false);
         generationBtn.addClickListener(e -> {
             assetService.generation(companyDtoComboBox.getValue().getId());
@@ -71,7 +76,7 @@ public class AssetView extends AssetMain {
             }
         });
 
-        final HorizontalLayout transitionGeneration = new HorizontalLayout(
+        this.transitionGeneration = new HorizontalLayout(
                 companyDtoComboBox, generationBtn, transitionBtn);
 
         add(transitionGeneration, grid);

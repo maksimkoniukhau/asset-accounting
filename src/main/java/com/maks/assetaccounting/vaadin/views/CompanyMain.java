@@ -69,6 +69,7 @@ public class CompanyMain extends AbstractView<CompanyDto> {
             final Dialog assetListDialog = new Dialog();
             final AssetView assetView = new AssetView(assetService, companyService, assetDataProvider,
                     companyDataProvider, new AssetForm(companyService, companyDataProvider));
+            assetView.getTransitionGeneration().remove(assetView.getGenerationBtn());
             assetListDialog.add(assetView);
             assetListDialog.setWidth("1200px");
             assetListDialog.setHeight("600px");
