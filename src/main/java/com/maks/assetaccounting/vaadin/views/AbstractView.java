@@ -6,6 +6,7 @@ import com.maks.assetaccounting.vaadin.components.CancelButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -68,7 +69,7 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
                 deleteBtn.setEnabled(false);
             }
         });
-//        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.setMultiSort(true);
         grid.setDataProvider(dataProvider);
         grid.setSizeFull();

@@ -134,9 +134,9 @@ public class UserView extends AbstractView<UserDto> {
         grid.addColumn(UserDto::getFirstName).setSortProperty("firstName").setHeader("First Name");
         grid.addColumn(UserDto::getLastName).setSortProperty("lastName").setHeader("Last Name");
         grid.addColumn(userDto -> userDto.getRoles().toString().replaceAll("ROLE_", ""))
-                .setWidth("100px").setSortProperty("roles").setHeader("Roles");
+                .setSortProperty("roles").setHeader("Roles");
         grid.addColumn(userDto -> userDto.isActive() ? "Enabled" : "Disabled")
-                .setWidth("15px").setSortProperty("active").setHeader("Activity");
+                .setSortProperty("active").setHeader("Activity").setWidth("90px").setFlexGrow(0);
         grid.addComponentColumn(userDto -> {
             final Button edit = new Button();
             edit.setIcon(VaadinIcon.EDIT.create());
@@ -145,7 +145,7 @@ public class UserView extends AbstractView<UserDto> {
                 editDialog.open();
             });
             return edit;
-        }).setWidth("1px");
+        }).setWidth("80px").setFlexGrow(0);
 
         grid.asMultiSelect().addSelectionListener(event -> {
             if (event.getValue().size() == 1) {

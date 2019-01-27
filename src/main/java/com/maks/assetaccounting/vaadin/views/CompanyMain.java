@@ -93,7 +93,7 @@ public class CompanyMain extends AbstractView<CompanyDto> {
                 saveDialog.open();
             });
             return edit;
-        }).setWidth("1px");
+        }).setWidth("80px").setFlexGrow(0);
 
         grid.setWidth("1100px");
     }

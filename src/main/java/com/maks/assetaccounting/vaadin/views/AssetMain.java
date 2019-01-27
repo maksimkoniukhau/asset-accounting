@@ -71,7 +71,7 @@ public class AssetMain extends AbstractView<AssetDto> {
                 saveDialog.open();
             });
             return edit;
-        }).setWidth("1px");
+        }).setWidth("80px").setFlexGrow(0);
 
         grid.setWidth("1200px");
     }
