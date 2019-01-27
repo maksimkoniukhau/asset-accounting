@@ -21,11 +21,11 @@ import java.util.List;
 
 public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout {
 
-    protected final FilterablePageableDataProvider<T, String> dataProvider;
+    final FilterablePageableDataProvider<T, String> dataProvider;
     private final TextField filterByName;
-    protected final Button addBtn;
+    final Button addBtn;
     private final Button deleteBtn;
-    protected final Grid<T> grid;
+    final Grid<T> grid;
     private final CrudService<T, T> service;
 
     public AbstractView(final FilterablePageableDataProvider<T, String> dataProvider,
@@ -83,10 +83,10 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
         setAlignItems(Alignment.CENTER);
     }
 
-    protected abstract void setupGrid(Grid<T> grid);
+    protected abstract void setupGrid(final Grid<T> grid);
 
     private void delete() {
-        List<T> dtoList = new ArrayList<>(grid.getSelectedItems());
+        final List<T> dtoList = new ArrayList<>(grid.getSelectedItems());
         service.deleteAll(dtoList);
         dataProvider.refreshAll();
         grid.deselectAll();

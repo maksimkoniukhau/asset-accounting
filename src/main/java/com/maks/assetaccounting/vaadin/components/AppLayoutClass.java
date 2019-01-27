@@ -34,8 +34,6 @@ public class AppLayoutClass extends AbstractAppRouterLayout {
                     "Companies", "companies"));
             setMenuItem(appLayoutMenu, new AppLayoutMenuItem(VaadinIcon.RECORDS.create(),
                     "Assets", "assets"));
-            setMenuItem(appLayoutMenu, new AppLayoutMenuItem(VaadinIcon.TABLE.create(),
-                    "Reports", "reports"));
             if (SecurityUtil.isAccessGranted(UserView.class)) {
                 setMenuItem(appLayoutMenu, new AppLayoutMenuItem(VaadinIcon.USERS.create(),
                         "Users", "users"));
