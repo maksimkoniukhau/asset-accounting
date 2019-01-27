@@ -2,6 +2,7 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.service.asset.AssetService;
+import com.maks.assetaccounting.vaadin.views.AssetView;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -46,9 +47,13 @@ public class AssetDataProvider extends FilterablePageableDataProvider<AssetDto, 
     @Override
     protected int sizeInBackEnd(final Query<AssetDto, String> query) {
         if (companyName != null) {
-            return assetService.countByCompanyName(query.getFilter(), companyName);
+            int count = assetService.countByCompanyName(query.getFilter(), companyName);
+            AssetView.FOOTER_LABEL.setText("Total: " + count + " assets");
+            return count;
         } else {
-            return (int) assetService.countAnyMatching(query.getFilter());
+            int count = (int) assetService.countAnyMatching(query.getFilter());
+            AssetView.FOOTER_LABEL.setText("Total: " + count + " assets");
+            return count;
         }
     }
 

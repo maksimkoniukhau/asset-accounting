@@ -2,6 +2,7 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.service.user.UserService;
+import com.maks.assetaccounting.vaadin.views.UserView;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -38,7 +39,9 @@ public class UserDataProvider extends FilterablePageableDataProvider<UserDto, St
 
     @Override
     protected int sizeInBackEnd(final Query<UserDto, String> query) {
-        return (int) userService.countAnyMatching(query.getFilter());
+        int count = (int) userService.countAnyMatching(query.getFilter());
+        UserView.FOOTER_LABEL.setText("Total: " + count + " users");
+        return count;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.maks.assetaccounting.service.CrudService;
 import com.maks.assetaccounting.vaadin.components.CancelButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.FooterRow;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H4;
@@ -27,6 +28,7 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
     private final Button deleteBtn;
     final Grid<T> grid;
     private final CrudService<T, T> service;
+    final FooterRow.FooterCell footerCell;
 
     public AbstractView(final FilterablePageableDataProvider<T, String> dataProvider,
                         final CrudService<T, T> service, final Grid<T> grid) {
@@ -75,6 +77,7 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
         grid.setSizeFull();
         grid.getStyle().set("margin", "auto");
         setupGrid(grid);
+        this.footerCell = grid.appendFooterRow().getCell(grid.getColumns().get(1));
 
         final HorizontalLayout panel = new HorizontalLayout(filterByName, clearFilterByNameBtn, addBtn, deleteBtn);
 

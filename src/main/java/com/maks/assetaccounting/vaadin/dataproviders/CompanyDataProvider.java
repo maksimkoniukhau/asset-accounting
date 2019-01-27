@@ -2,6 +2,7 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.company.CompanyService;
+import com.maks.assetaccounting.vaadin.views.CompanyView;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -50,7 +51,9 @@ public class CompanyDataProvider extends FilterablePageableDataProvider<CompanyD
 
     @Override
     protected int sizeInBackEnd(final Query<CompanyDto, String> query) {
-        return (int) companyService.countAnyMatching(query.getFilter());
+        int count = (int) companyService.countAnyMatching(query.getFilter());
+        CompanyView.FOOTER_LABEL.setText("Total: " + count + " companies");
+        return count;
     }
 
     @Override
