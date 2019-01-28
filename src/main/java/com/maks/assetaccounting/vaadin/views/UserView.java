@@ -10,7 +10,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -30,7 +29,6 @@ public class UserView extends AbstractView<UserDto> {
     private final Button changePasswordBtn;
     private final Dialog editDialog;
     private UserDto changePassUserDto;
-    public static final Label FOOTER_LABEL = new Label();
 
     @Autowired
     public UserView(final UserService userService, final UserDataProvider userDataProvider) {
@@ -41,8 +39,7 @@ public class UserView extends AbstractView<UserDto> {
         this.editUserForm = new UserForm(userService);
         this.changePasswordForm = new UserForm(userService);
 
-        FOOTER_LABEL.getStyle().set("font-weight", "bold");
-        footerCell.setComponent(FOOTER_LABEL);
+        footerCell.setComponent(userDataProvider.getFooterLabel());
 
         createUserForm.remove(createUserForm.getActive(), createUserForm.getRoles());
         createUserForm.makeCreateValidation();

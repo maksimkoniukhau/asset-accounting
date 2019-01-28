@@ -13,7 +13,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -42,7 +41,6 @@ public class AssetView extends AbstractView<AssetDto> {
     private final HorizontalLayout transitionGeneration;
     private final ComboBox<String> reportsComboBox;
     private final Button generationBtn;
-    public static final Label FOOTER_LABEL = new Label();
 
     @Autowired
     public AssetView(final AssetService assetService, final CompanyService companyService,
@@ -55,8 +53,7 @@ public class AssetView extends AbstractView<AssetDto> {
         this.assetForm = assetForm;
         this.saveDialog = new Dialog();
 
-        FOOTER_LABEL.getStyle().set("font-weight", "bold");
-        footerCell.setComponent(FOOTER_LABEL);
+        footerCell.setComponent(assetDataProvider.getFooterLabel());
 
         addBtn.setText("New asset");
         addBtn.addClickListener(e -> {

@@ -2,7 +2,7 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.service.asset.AssetService;
-import com.maks.assetaccounting.vaadin.views.AssetView;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -24,10 +24,13 @@ public class AssetDataProvider extends FilterablePageableDataProvider<AssetDto, 
 
     private final AssetService assetService;
     private String companyName;
+    private final Label footerLabel;
 
     @Autowired
     public AssetDataProvider(final AssetService assetService) {
         this.assetService = assetService;
+        this.footerLabel = new Label();
+        footerLabel.getStyle().set("font-weight", "bold");
     }
 
     @Override
@@ -48,11 +51,11 @@ public class AssetDataProvider extends FilterablePageableDataProvider<AssetDto, 
     protected int sizeInBackEnd(final Query<AssetDto, String> query) {
         if (companyName != null) {
             int count = assetService.countByCompanyName(query.getFilter(), companyName);
-            AssetView.FOOTER_LABEL.setText("Total: " + count + " assets");
+            footerLabel.setText("Total: " + count + " assets");
             return count;
         } else {
             int count = (int) assetService.countAnyMatching(query.getFilter());
-            AssetView.FOOTER_LABEL.setText("Total: " + count + " assets");
+            footerLabel.setText("Total: " + count + " assets");
             return count;
         }
     }

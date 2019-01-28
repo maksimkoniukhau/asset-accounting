@@ -13,7 +13,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.PageTitle;
@@ -31,7 +30,6 @@ public class CompanyView extends AbstractView<CompanyDto> {
     private final AssetService assetService;
     private final CompanyDataProvider companyDataProvider;
     private final AssetDataProvider assetDataProvider;
-    public static final Label FOOTER_LABEL = new Label();
 
     @Autowired
     public CompanyView(final CompanyService companyService, final CompanyDataProvider companyDataProvider,
@@ -46,8 +44,7 @@ public class CompanyView extends AbstractView<CompanyDto> {
         this.companyDataProvider = companyDataProvider;
         this.assetDataProvider = assetDataProvider;
 
-        FOOTER_LABEL.getStyle().set("font-weight", "bold");
-        footerCell.setComponent(FOOTER_LABEL);
+        footerCell.setComponent(companyDataProvider.getFooterLabel());
 
         addBtn.setText("New company");
         addBtn.addClickListener(e -> {

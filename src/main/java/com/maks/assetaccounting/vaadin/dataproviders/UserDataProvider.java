@@ -2,11 +2,12 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.UserDto;
 import com.maks.assetaccounting.service.user.UserService;
-import com.maks.assetaccounting.vaadin.views.UserView;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,13 +19,17 @@ import static com.maks.assetaccounting.vaadin.utils.DataProvidersUtil.DEFAULT_SO
 
 @SpringComponent
 @UIScope
+@Data
 public class UserDataProvider extends FilterablePageableDataProvider<UserDto, String> {
 
     private final UserService userService;
+    public final Label footerLabel;
 
     @Autowired
     public UserDataProvider(final UserService userService) {
         this.userService = userService;
+        this.footerLabel = new Label();
+        footerLabel.getStyle().set("font-weight", "bold");
     }
 
     @Override
@@ -40,7 +45,7 @@ public class UserDataProvider extends FilterablePageableDataProvider<UserDto, St
     @Override
     protected int sizeInBackEnd(final Query<UserDto, String> query) {
         int count = (int) userService.countAnyMatching(query.getFilter());
-        UserView.FOOTER_LABEL.setText("Total: " + count + " users");
+        footerLabel.setText("Total: " + count + " users");
         return count;
     }
 
