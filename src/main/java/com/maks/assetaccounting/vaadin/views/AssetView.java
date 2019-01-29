@@ -53,8 +53,6 @@ public class AssetView extends AbstractView<AssetDto> {
         this.assetForm = assetForm;
         this.saveDialog = new Dialog();
 
-        footerCell.setComponent(assetDataProvider.getFooterLabel());
-
         addBtn.setText("New asset");
         addBtn.addClickListener(e -> {
             assetForm.setAssetDto(new AssetDto());

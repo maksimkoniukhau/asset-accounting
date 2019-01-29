@@ -2,35 +2,24 @@ package com.maks.assetaccounting.vaadin.dataproviders;
 
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.service.company.CompanyService;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.data.provider.Query;
-import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.vaadin.artur.spring.dataprovider.FilterablePageableDataProvider;
-
-import java.util.List;
-
-import static com.maks.assetaccounting.vaadin.utils.DataProvidersUtil.DEFAULT_SORT_ORDERS;
 
 @SpringComponent
 @UIScope
 @Data
-public class CompanyDataProvider extends FilterablePageableDataProvider<CompanyDto, String> {
+public class CompanyDataProvider extends AbstractDataProvider<CompanyDto> {
 
     private final CompanyService companyService;
     private String reportFilter;
-    private final Label footerLabel;
 
-    @Autowired
     public CompanyDataProvider(final CompanyService companyService) {
+        super(CompanyDto.class);
         this.companyService = companyService;
-        this.footerLabel = new Label();
-        footerLabel.getStyle().set("font-weight", "bold");
     }
 
     @Override
@@ -48,27 +37,9 @@ public class CompanyDataProvider extends FilterablePageableDataProvider<CompanyD
     }
 
     @Override
-    protected List<QuerySortOrder> getDefaultSortOrders() {
-        return DEFAULT_SORT_ORDERS;
-    }
-
-    @Override
     protected int sizeInBackEnd(final Query<CompanyDto, String> query) {
-        int count = (int) companyService.countAnyMatching(query.getFilter());
+        final int count = (int) companyService.countAnyMatching(query.getFilter());
         setFooterLabel(query, count);
         return count;
-    }
-
-    @Override
-    public Object getId(final CompanyDto item) {
-        return item.getId();
-    }
-
-    private void setFooterLabel(final Query<CompanyDto, String> query, final int count) {
-        if (query.getFilter().isPresent() && !query.getFilter().get().isEmpty()) {
-            footerLabel.setText("Found: " + count + " companies");
-        } else {
-            footerLabel.setText("Total: " + count + " companies");
-        }
     }
 }

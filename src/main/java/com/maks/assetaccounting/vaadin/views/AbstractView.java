@@ -3,9 +3,9 @@ package com.maks.assetaccounting.vaadin.views;
 import com.maks.assetaccounting.dto.AbstractDto;
 import com.maks.assetaccounting.service.CrudService;
 import com.maks.assetaccounting.vaadin.components.CancelButton;
+import com.maks.assetaccounting.vaadin.dataproviders.AbstractDataProvider;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.grid.FooterRow;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H4;
@@ -15,22 +15,20 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import org.vaadin.artur.spring.dataprovider.FilterablePageableDataProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout {
 
-    final FilterablePageableDataProvider<T, String> dataProvider;
+    final AbstractDataProvider<T> dataProvider;
     private final TextField filterByName;
     final Button addBtn;
     private final Button deleteBtn;
     final Grid<T> grid;
     private final CrudService<T, T> service;
-    final FooterRow.FooterCell footerCell;
 
-    public AbstractView(final FilterablePageableDataProvider<T, String> dataProvider,
+    public AbstractView(final AbstractDataProvider<T> dataProvider,
                         final CrudService<T, T> service, final Grid<T> grid) {
         this.dataProvider = dataProvider;
         this.grid = grid;
@@ -77,7 +75,7 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
         grid.setSizeFull();
         grid.getStyle().set("margin", "auto");
         setupGrid(grid);
-        this.footerCell = grid.appendFooterRow().getCell(grid.getColumns().get(1));
+        grid.appendFooterRow().getCell(grid.getColumns().get(1)).setComponent(dataProvider.getFooterLabel());
 
         final HorizontalLayout panel = new HorizontalLayout(filterByName, clearFilterByNameBtn, addBtn, deleteBtn);
 

@@ -44,8 +44,6 @@ public class CompanyView extends AbstractView<CompanyDto> {
         this.companyDataProvider = companyDataProvider;
         this.assetDataProvider = assetDataProvider;
 
-        footerCell.setComponent(companyDataProvider.getFooterLabel());
-
         addBtn.setText("New company");
         addBtn.addClickListener(e -> {
             companyForm.setCompanyDto(new CompanyDto());

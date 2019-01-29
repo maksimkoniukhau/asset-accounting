@@ -39,8 +39,6 @@ public class UserView extends AbstractView<UserDto> {
         this.editUserForm = new UserForm(userService);
         this.changePasswordForm = new UserForm(userService);
 
-        footerCell.setComponent(userDataProvider.getFooterLabel());
-
         createUserForm.remove(createUserForm.getActive(), createUserForm.getRoles());
         createUserForm.makeCreateValidation();
 
