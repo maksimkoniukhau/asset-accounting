@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-public interface AssetService extends CrudService<AssetDto, AssetDto> {
+public interface AssetService extends CrudService<AssetDto> {
 
     List<AssetDto> getAllByName(final String name);
 

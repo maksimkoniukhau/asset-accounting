@@ -26,10 +26,10 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
     final Button addBtn;
     private final Button deleteBtn;
     final Grid<T> grid;
-    private final CrudService<T, T> service;
+    private final CrudService<T> service;
 
     public AbstractView(final AbstractDataProvider<T> dataProvider,
-                        final CrudService<T, T> service, final Grid<T> grid) {
+                        final CrudService<T> service, final Grid<T> grid) {
         this.dataProvider = dataProvider;
         this.grid = grid;
         this.service = service;

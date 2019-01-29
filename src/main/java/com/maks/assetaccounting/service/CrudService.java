@@ -6,21 +6,21 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-public interface CrudService<T1, T2> {
+public interface CrudService<T> {
 
-    T1 create(final T2 obj);
+    T create(final T obj);
 
-    T1 get(final Long id);
+    T get(final Long id);
 
-    T1 update(final T2 obj, final Long id);
+    T update(final T obj, final Long id);
 
-    T1 delete(final Long id);
+    T delete(final Long id);
 
-    List<T1> getAll();
+    List<T> getAll();
 
-    void deleteAll(final List<T2> userDtoList);
+    void deleteAll(final List<T> userDtoList);
 
-    Page<T1> findAnyMatching(final Optional<String> filter, final Pageable pageable);
+    Page<T> findAnyMatching(final Optional<String> filter, final Pageable pageable);
 
     long countAnyMatching(final Optional<String> filter);
 }
