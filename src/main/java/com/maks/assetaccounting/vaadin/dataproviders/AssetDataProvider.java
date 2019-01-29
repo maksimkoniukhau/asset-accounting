@@ -51,11 +51,11 @@ public class AssetDataProvider extends FilterablePageableDataProvider<AssetDto, 
     protected int sizeInBackEnd(final Query<AssetDto, String> query) {
         if (companyName != null) {
             int count = assetService.countByCompanyName(query.getFilter(), companyName);
-            footerLabel.setText("Total: " + count + " assets");
+            setFooterLabel(query, count);
             return count;
         } else {
             int count = (int) assetService.countAnyMatching(query.getFilter());
-            footerLabel.setText("Total: " + count + " assets");
+            setFooterLabel(query, count);
             return count;
         }
     }
@@ -63,5 +63,13 @@ public class AssetDataProvider extends FilterablePageableDataProvider<AssetDto, 
     @Override
     public Object getId(final AssetDto item) {
         return item.getId();
+    }
+
+    private void setFooterLabel(final Query<AssetDto, String> query, final int count) {
+        if (query.getFilter().isPresent() && !query.getFilter().get().isEmpty()) {
+            footerLabel.setText("Found: " + count + " assets");
+        } else {
+            footerLabel.setText("Total: " + count + " assets");
+        }
     }
 }

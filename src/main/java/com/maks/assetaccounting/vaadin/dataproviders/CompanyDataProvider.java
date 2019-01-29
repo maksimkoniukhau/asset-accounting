@@ -55,12 +55,20 @@ public class CompanyDataProvider extends FilterablePageableDataProvider<CompanyD
     @Override
     protected int sizeInBackEnd(final Query<CompanyDto, String> query) {
         int count = (int) companyService.countAnyMatching(query.getFilter());
-        footerLabel.setText("Total: " + count + " companies");
+        setFooterLabel(query, count);
         return count;
     }
 
     @Override
     public Object getId(final CompanyDto item) {
         return item.getId();
+    }
+
+    private void setFooterLabel(final Query<CompanyDto, String> query, final int count) {
+        if (query.getFilter().isPresent() && !query.getFilter().get().isEmpty()) {
+            footerLabel.setText("Found: " + count + " companies");
+        } else {
+            footerLabel.setText("Total: " + count + " companies");
+        }
     }
 }

@@ -45,12 +45,20 @@ public class UserDataProvider extends FilterablePageableDataProvider<UserDto, St
     @Override
     protected int sizeInBackEnd(final Query<UserDto, String> query) {
         int count = (int) userService.countAnyMatching(query.getFilter());
-        footerLabel.setText("Total: " + count + " users");
+        setFooterLabel(query, count);
         return count;
     }
 
     @Override
     public Object getId(final UserDto item) {
         return item.getId();
+    }
+
+    private void setFooterLabel(final Query<UserDto, String> query, final int count) {
+        if (query.getFilter().isPresent() && !query.getFilter().get().isEmpty()) {
+            footerLabel.setText("Found: " + count + " users");
+        } else {
+            footerLabel.setText("Total: " + count + " users");
+        }
     }
 }
