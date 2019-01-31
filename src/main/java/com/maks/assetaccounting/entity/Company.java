@@ -2,11 +2,9 @@ package com.maks.assetaccounting.entity;
 
 import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -14,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Company extends AbstractEntity {
     @NonNull
     @NotBlank
@@ -23,4 +21,10 @@ public class Company extends AbstractEntity {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Asset> assets;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @NotNull
+    @ToString.Exclude
+    private User user;
 }

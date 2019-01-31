@@ -14,10 +14,14 @@ import java.util.Collections;
 public class UserConverter implements DtoEntityConverter<UserDto, User> {
 
     private final UserRepository userRepository;
+    private final CompanyConverter companyConverter;
+    private final AssetConverter assetConverter;
 
     @Autowired
-    public UserConverter(final UserRepository userRepository) {
+    public UserConverter(final UserRepository userRepository, final CompanyConverter companyConverter, final AssetConverter assetConverter) {
         this.userRepository = userRepository;
+        this.companyConverter = companyConverter;
+        this.assetConverter = assetConverter;
     }
 
     @Override
@@ -26,6 +30,8 @@ public class UserConverter implements DtoEntityConverter<UserDto, User> {
             final UserDto userDto = new UserDto();
             BeanUtils.copyProperties(user, userDto, "password");
             userDto.setPassword("");
+            userDto.setCompanyDtos(companyConverter.convertListToDto(user.getCompanies()));
+            userDto.setAssetDtos(assetConverter.convertListToDto(user.getAssets()));
             return userDto;
         }
         return null;
@@ -37,6 +43,8 @@ public class UserConverter implements DtoEntityConverter<UserDto, User> {
             final User user = new User();
             BeanUtils.copyProperties(userDto, user, "password");
             userRepository.findById(userDto.getId()).ifPresent(byId -> user.setPassword(byId.getPassword()));
+            user.setCompanies(companyConverter.convertListToEntity(userDto.getCompanyDtos()));
+            user.setAssets(assetConverter.convertListToEntity(userDto.getAssetDtos()));
             return user;
         }
         return null;

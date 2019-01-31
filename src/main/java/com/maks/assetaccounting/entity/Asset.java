@@ -2,10 +2,7 @@ package com.maks.assetaccounting.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -14,8 +11,8 @@ import java.time.ZonedDateTime;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@ToString(callSuper = true, exclude = "company")
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Asset extends AbstractEntity {
     @NonNull
     @NotBlank
@@ -38,8 +35,16 @@ public class Asset extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "company_id")
     @NonNull
+    @NotNull
+    @ToString.Exclude
     private Company company;
 
     @Column(name = "number_of_transition")
     private int numberOfTransition;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @NotNull
+    @ToString.Exclude
+    private User user;
 }

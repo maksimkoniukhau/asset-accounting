@@ -2,6 +2,7 @@ package com.maks.assetaccounting.converter;
 
 import com.maks.assetaccounting.dto.CompanyDto;
 import com.maks.assetaccounting.entity.Company;
+import com.maks.assetaccounting.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,12 @@ import org.springframework.stereotype.Service;
 public class CompanyConverter implements DtoEntityConverter<CompanyDto, Company> {
 
     private final AssetConverter assetConverter;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CompanyConverter(final AssetConverter assetConverter) {
+    public CompanyConverter(final AssetConverter assetConverter, final UserRepository userRepository) {
         this.assetConverter = assetConverter;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -22,6 +25,7 @@ public class CompanyConverter implements DtoEntityConverter<CompanyDto, Company>
             final CompanyDto companyDto = new CompanyDto();
             BeanUtils.copyProperties(company, companyDto);
             companyDto.setAssetDtos(assetConverter.convertListToDto(company.getAssets()));
+            companyDto.setUsername(company.getUser().getUsername());
             return companyDto;
         }
         return null;
@@ -33,6 +37,7 @@ public class CompanyConverter implements DtoEntityConverter<CompanyDto, Company>
             final Company company = new Company();
             BeanUtils.copyProperties(companyDto, company);
             company.setAssets(assetConverter.convertListToEntity(companyDto.getAssetDtos()));
+            company.setUser(userRepository.findByUsername(companyDto.getUsername()));
             return company;
         }
         return null;

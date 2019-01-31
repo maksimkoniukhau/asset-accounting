@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @ToString(callSuper = true)
 public class AssetDto extends AbstractDto {
     @NotBlank
@@ -23,4 +23,6 @@ public class AssetDto extends AbstractDto {
     private double cost;
 
     private String companyName;
+
+    private String username;
 }

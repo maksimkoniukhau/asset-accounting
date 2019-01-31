@@ -8,6 +8,7 @@ import lombok.ToString;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,4 +33,8 @@ public class UserDto extends AbstractDto {
     private boolean active = true;
 
     private Set<Role> roles;
+
+    private List<CompanyDto> companyDtos;
+
+    private List<AssetDto> assetDtos;
 }
