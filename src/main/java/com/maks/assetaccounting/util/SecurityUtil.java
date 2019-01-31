@@ -1,21 +1,24 @@
 package com.maks.assetaccounting.util;
 
+import com.maks.assetaccounting.entity.User;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SecurityUtil {
 
     private SecurityUtil() {
     }
 
-    public static boolean isAccessGranted(Class<?> securedClass) {
+    public static boolean isAccessGranted(final Class<?> securedClass) {
         final Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
 //         All views require authentication.
         if (!isUserLoggedIn(userAuthentication)) {
@@ -38,5 +41,31 @@ public class SecurityUtil {
     private static boolean isUserLoggedIn(final Authentication authentication) {
         return authentication != null
                 && !(authentication instanceof AnonymousAuthenticationToken);
+    }
+
+    public static User getAuthUser() {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return null;
+        }
+        final Object principal = auth.getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((User) principal);
+        }
+        return null;
+    }
+
+    public static User getUser() {
+        final User user = getAuthUser();
+        Objects.requireNonNull(user, "No authorized user found");
+        return user;
+    }
+
+    public static String getUsername() {
+        return getUser().getUsername();
+    }
+
+    public static Long getAuthUserId() {
+        return getUser().getId();
     }
 }
