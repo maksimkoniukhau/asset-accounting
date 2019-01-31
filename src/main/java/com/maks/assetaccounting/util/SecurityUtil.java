@@ -43,7 +43,7 @@ public class SecurityUtil {
                 && !(authentication instanceof AnonymousAuthenticationToken);
     }
 
-    public static User getAuthUser() {
+    public static User getCurrentUser() {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return null;
@@ -55,17 +55,17 @@ public class SecurityUtil {
         return null;
     }
 
-    public static User getUser() {
-        final User user = getAuthUser();
+    public static User getAuthUser() {
+        final User user = getCurrentUser();
         Objects.requireNonNull(user, "No authorized user found");
         return user;
     }
 
-    public static String getUsername() {
-        return getUser().getUsername();
+    public static String getAuthUsername() {
+        return getAuthUser().getUsername();
     }
 
     public static Long getAuthUserId() {
-        return getUser().getId();
+        return getAuthUser().getId();
     }
 }
