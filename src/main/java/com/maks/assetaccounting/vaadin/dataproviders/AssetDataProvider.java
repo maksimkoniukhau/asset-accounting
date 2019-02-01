@@ -9,6 +9,8 @@ import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUserId;
+
 @SpringComponent
 @UIScope
 @Data
@@ -25,20 +27,20 @@ public class AssetDataProvider extends AbstractDataProvider<AssetDto> {
     @Override
     protected Page<AssetDto> fetchFromBackEnd(final Query<AssetDto, String> query, final Pageable pageable) {
         if (companyName != null) {
-            return assetService.getAllByCompanyName(query.getFilter(), companyName, pageable);
+            return assetService.getAllByCompanyName(query.getFilter(), companyName, pageable, getAuthUserId());
         } else {
-            return assetService.findAnyMatching(query.getFilter(), pageable);
+            return assetService.findAnyMatching(query.getFilter(), pageable, getAuthUserId());
         }
     }
 
     @Override
     protected int sizeInBackEnd(final Query<AssetDto, String> query) {
         if (companyName != null) {
-            final int count = assetService.countByCompanyName(query.getFilter(), companyName);
+            final int count = assetService.countByCompanyName(query.getFilter(), companyName, getAuthUserId());
             setFooterLabel(query, count);
             return count;
         } else {
-            final int count = (int) assetService.countAnyMatching(query.getFilter());
+            final int count = (int) assetService.countAnyMatching(query.getFilter(), getAuthUserId());
             setFooterLabel(query, count);
             return count;
         }

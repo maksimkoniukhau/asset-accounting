@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUserId;
+
 @SpringComponent
 @UIScope
 @Data
@@ -25,12 +27,12 @@ public class UserDataProvider extends AbstractDataProvider<UserDto> {
 
     @Override
     protected Page<UserDto> fetchFromBackEnd(final Query<UserDto, String> query, final Pageable pageable) {
-        return userService.findAnyMatching(query.getFilter(), pageable);
+        return userService.findAnyMatching(query.getFilter(), pageable, getAuthUserId());
     }
 
     @Override
     protected int sizeInBackEnd(final Query<UserDto, String> query) {
-        final int count = (int) userService.countAnyMatching(query.getFilter());
+        final int count = (int) userService.countAnyMatching(query.getFilter(), getAuthUserId());
         setFooterLabel(query, count);
         return count;
     }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUserId;
+
 @RestController
 @RequestMapping("user")
 @Slf4j
@@ -22,18 +24,18 @@ public class UserController {
     @PostMapping
     public UserDto createUser(@RequestBody final UserDto userDto) {
         log.info("create {}", userDto);
-        return userService.create(userDto);
+        return userService.create(userDto, null);
     }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
         log.info("get all users");
-        return userService.getAll();
+        return userService.getAll(getAuthUserId());
     }
 
     @GetMapping("{id}")
     public UserDto getUser(@PathVariable("id") final Long id) {
         log.info("get user with id = {}", id);
-        return userService.get(id);
+        return userService.get(id, getAuthUserId());
     }
 }

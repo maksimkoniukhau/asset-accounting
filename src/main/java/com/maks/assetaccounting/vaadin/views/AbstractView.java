@@ -19,6 +19,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUserId;
+
 public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout {
 
     final AbstractDataProvider<T> dataProvider;
@@ -88,8 +90,8 @@ public abstract class AbstractView<T extends AbstractDto> extends VerticalLayout
 
     private void delete() {
         final List<T> dtoList = new ArrayList<>(grid.getSelectedItems());
-        service.deleteAll(dtoList);
-        dataProvider.refreshAll();
+        service.deleteAll(dtoList, getAuthUserId());
         grid.deselectAll();
+        dataProvider.refreshAll();
     }
 }

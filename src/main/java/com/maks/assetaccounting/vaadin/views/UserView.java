@@ -18,6 +18,8 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUsername;
+
 @Route(value = "users", layout = AppLayoutClass.class)
 @PageTitle("Asset Accounting/Users")
 @Secured("ROLE_ADMIN")
@@ -159,13 +161,13 @@ public class UserView extends AbstractView<UserDto> {
     }
 
     private void update() {
-        UserDto userDto = userService.update(editUserForm.getUserDto(), editUserForm.getUserDto().getId());
+        UserDto userDto = userService.update(editUserForm.getUserDto(), editUserForm.getUserDto().getId(), getAuthUsername());
         dataProvider.refreshItem(userDto);
         editUserForm.setUserDto(null);
     }
 
     private void create() {
-        userService.create(createUserForm.getUserDto());
+        userService.create(createUserForm.getUserDto(), getAuthUsername());
         dataProvider.refreshAll();
         createUserForm.setUserDto(null);
     }

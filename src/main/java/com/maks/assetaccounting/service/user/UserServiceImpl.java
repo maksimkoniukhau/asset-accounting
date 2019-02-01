@@ -42,21 +42,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto create(final UserDto userDto) {
+    public UserDto create(final UserDto userDto, final String username) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         final User user = userRepository.save(userConverter.convertToCreateEntity(userDto));
         return userConverter.convertToDto(user);
     }
 
     @Override
-    public UserDto get(final Long id) {
+    public UserDto get(final Long id, final Long authUserId) {
         return userConverter.convertToDto(userRepository.findById(id).orElse(null));
     }
 
     @Override
     @Transactional
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    public UserDto update(final UserDto userDto, final Long id) {
+    public UserDto update(final UserDto userDto, final Long id, final String username) {
         assureIdConsistent(userDto, id);
         final User user = userRepository.save(userConverter.convertToEntity(userDto));
         return userConverter.convertToDto(user);
@@ -64,22 +63,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @Secured({"ROLE_USER", "ROLE_ADMIN"})
-    public UserDto delete(final Long id) {
-        final UserDto userToFrontDto = get(id);
+    @Secured("ROLE_ADMIN")
+    public UserDto delete(final Long id, final Long authUserId) {
+        final UserDto userToFrontDto = get(id, authUserId);
         userRepository.deleteById(id);
         return userToFrontDto;
     }
 
     @Override
     @Secured("ROLE_ADMIN")
-    public List<UserDto> getAll() {
+    public List<UserDto> getAll(final Long authUserId) {
         return userConverter.convertListToDto(userRepository.findAll());
     }
 
     @Override
     @Transactional
-    public void deleteAll(final List<UserDto> userDtoList) {
+    @Secured("ROLE_ADMIN")
+    public void deleteAll(final List<UserDto> userDtoList, final Long authUserId) {
         userRepository.deleteAll(userConverter.convertListToEntity(userDtoList));
     }
 
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDto> findAnyMatching(final Optional<String> filter, final Pageable pageable) {
+    public Page<UserDto> findAnyMatching(final Optional<String> filter, final Pageable pageable, final Long authUserId) {
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
             return userConverter.convertPageToDto(userRepository.findByUsernameLikeIgnoreCase(repositoryFilter, pageable));
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long countAnyMatching(final Optional<String> filter) {
+    public long countAnyMatching(final Optional<String> filter, final Long authUserId) {
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
             return userRepository.countByUsernameLikeIgnoreCase(repositoryFilter);

@@ -4,6 +4,7 @@ import com.maks.assetaccounting.converter.AssetConverter;
 import com.maks.assetaccounting.dto.AssetDto;
 import com.maks.assetaccounting.entity.Asset;
 import com.maks.assetaccounting.entity.Company;
+import com.maks.assetaccounting.entity.User;
 import com.maks.assetaccounting.repository.AssetRepository;
 import com.maks.assetaccounting.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.maks.assetaccounting.util.ValidationUtil.assureIdConsistent;
 import static com.maks.assetaccounting.util.ValidationUtil.checkNotFound;
@@ -39,19 +41,23 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     @Transactional
-    public AssetDto create(final AssetDto assetDto) {
-        final Asset asset = assetRepository.save(assetConverter.convertToEntityForCreate(assetDto));
+    public AssetDto create(final AssetDto assetDto, final String username) {
+        assetDto.setUsername(username);
+        final Asset asset = assetRepository.save(assetConverter.convertToCreateEntity(assetDto));
         return assetConverter.convertToDto(asset);
     }
 
     @Override
-    public AssetDto get(final Long id) {
-        return assetConverter.convertToDto(assetRepository.findById(id).orElse(null));
+    public AssetDto get(final Long id, final Long authUserId) {
+        return assetConverter.convertToDto(assetRepository.findByUserIdAndId(authUserId, id));
     }
 
     @Override
     @Transactional
-    public AssetDto update(final AssetDto assetDto, final Long id) {
+    public AssetDto update(final AssetDto assetDto, final Long id, final String username) {
+        if (!assetDto.getUsername().equals(username)) {
+            throw new IllegalArgumentException(assetDto + " isn't linked to " + username);
+        }
         assureIdConsistent(assetDto, id);
         final Asset asset = assetRepository.save(assetConverter.convertToEntity(assetDto));
         return assetConverter.convertToDto(asset);
@@ -59,62 +65,62 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     @Transactional
-    public AssetDto delete(final Long id) {
-        final AssetDto assetDto = get(id);
-        assetRepository.deleteById(id);
+    public AssetDto delete(final Long id, final Long authUserId) {
+        final AssetDto assetDto = get(id, authUserId);
+        assetRepository.deleteByUserIdAndId(authUserId, id);
         return assetDto;
     }
 
     @Override
-    public List<AssetDto> getAll() {
-        return assetConverter.convertListToDto(assetRepository.findAll());
+    public List<AssetDto> getAll(final Long authUserId) {
+        return assetConverter.convertListToDto(assetRepository.findAllByUserId(authUserId));
     }
 
     @Override
     @Transactional
-    public void deleteAll(final List<AssetDto> userDtoList) {
-        assetRepository.deleteAll(assetConverter.convertListToEntity(userDtoList));
-    }
-
-    @Override
-    public List<AssetDto> getAllByName(final String name) {
-        return assetConverter.convertListToDto(assetRepository.findAllByName(name));
+    public void deleteAll(final List<AssetDto> userDtoList, final Long authUserId) {
+        assetRepository.deleteAll(assetConverter.convertListToEntity(userDtoList)
+                .stream()
+                .filter(asset -> asset.getUser().getId().equals(authUserId))
+                .collect(Collectors.toList()));
     }
 
     @Override
     public Page<AssetDto> getAllByCompanyName(final Optional<String> filter, final String companyName,
-                                              final Pageable pageable) {
+                                              final Pageable pageable, final Long authUserId) {
         final Company company = companyRepository.findByName(companyName);
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
             return assetConverter.convertPageToDto(assetRepository
-                    .findByCompanyAndNameLikeIgnoreCase(checkNotFound(company, "name " + companyName),
+                    .findByUserIdAndCompanyAndNameLikeIgnoreCase(authUserId,
+                            checkNotFound(company, "name " + companyName),
                             repositoryFilter, pageable));
         } else {
-            return assetConverter.convertPageToDto(assetRepository.findByCompany(company, pageable));
+            return assetConverter.convertPageToDto(assetRepository.findByUserIdAndCompany(authUserId, company, pageable));
         }
     }
 
     @Override
-    public int countByCompanyName(final Optional<String> filter, final String companyName) {
+    public int countByCompanyName(final Optional<String> filter, final String companyName, final Long authUserId) {
         final Company company = companyRepository.findByName(companyName);
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
-            return assetRepository.countByCompanyAndNameLikeIgnoreCase(
+            return assetRepository.countByUserIdAndCompanyAndNameLikeIgnoreCase(authUserId,
                     checkNotFound(company, "name " + companyName), repositoryFilter);
         } else {
-            return assetRepository.countByCompany(company);
+            return assetRepository.countByUserIdAndCompany(authUserId, company);
         }
     }
 
     @Override
     @Transactional
-    public List<AssetDto> generation(final Long companyId) {
+    public List<AssetDto> generation(final Long companyId, final User authUser) {
         final List<Asset> assets = new ArrayList<>();
         final Company toCompany = companyRepository.findById(companyId).orElse(null);
         checkNotFound(toCompany, "id " + companyId);
         for (int i = 1; i <= 100; i++) {
             final Asset asset = new Asset(String.format("Asset %d", i), ZonedDateTime.now(), i + 1000, toCompany);
+            asset.setUser(authUser);
             assets.add(asset);
         }
         return assetConverter.convertListToDto(assetRepository.saveAll(assets));
@@ -138,32 +144,35 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public List<AssetDto> getMarketable() {
-        return assetConverter.convertListToDto(assetRepository.findFirst50ByOrderByNumberOfTransitionDesc());
+    public List<AssetDto> getMarketable(final Long authUserId) {
+        return assetConverter.convertListToDto(assetRepository
+                .findAllByUserIdOrderByNumberOfTransitionDesc(authUserId));
     }
 
     @Override
-    public List<AssetDto> getExpensiveAndMarketable() {
-        return assetConverter.convertListToDto(assetRepository.findFirst50ByOrderByCostDescNumberOfTransitionDesc());
+    public List<AssetDto> getExpensiveAndMarketable(final Long authUserId) {
+        return assetConverter.convertListToDto(assetRepository
+                .findAllByUserIdOrderByCostDescNumberOfTransitionDesc(authUserId));
     }
 
     @Override
-    public Page<AssetDto> findAnyMatching(final Optional<String> filter, final Pageable pageable) {
+    public Page<AssetDto> findAnyMatching(final Optional<String> filter, final Pageable pageable, final Long authUserId) {
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
-            return assetConverter.convertPageToDto(assetRepository.findByNameLikeIgnoreCase(repositoryFilter, pageable));
+            return assetConverter.convertPageToDto(assetRepository
+                    .findByUserIdAndNameLikeIgnoreCase(authUserId, repositoryFilter, pageable));
         } else {
-            return assetConverter.convertPageToDto(assetRepository.findBy(pageable));
+            return assetConverter.convertPageToDto(assetRepository.findByUserId(authUserId, pageable));
         }
     }
 
     @Override
-    public long countAnyMatching(final Optional<String> filter) {
+    public long countAnyMatching(final Optional<String> filter, final Long authUserId) {
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
-            return assetRepository.countByNameLikeIgnoreCase(repositoryFilter);
+            return assetRepository.countByUserIdAndNameLikeIgnoreCase(authUserId, repositoryFilter);
         } else {
-            return assetRepository.count();
+            return assetRepository.countByUserId(authUserId);
         }
     }
 }

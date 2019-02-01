@@ -45,9 +45,9 @@ public class SecurityController {
         if (!result.hasErrors()) {
             final UserDto userFromDb = userService.getByName(accountDto.getUsername());
             if (userFromDb != null) {
-                throw new IllegalArgumentException(userService.get(userFromDb.getId()) + " already exists");
+                throw new IllegalArgumentException(userService.get(userFromDb.getId(), null) + " already exists");
             }
-            userService.create(accountDto);
+            userService.create(accountDto, null);
         }
         if (result.hasErrors()) {
             return new ModelAndView("registration", "user", accountDto);

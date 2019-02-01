@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.maks.assetaccounting.util.ValidationUtil.assureIdConsistent;
 
@@ -30,40 +31,47 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public CompanyDto create(final CompanyDto companyDto) {
+    public CompanyDto create(final CompanyDto companyDto, final String username) {
+        companyDto.setUsername(username);
         final Company company = companyRepository.save(companyConverter.convertToEntity(companyDto));
         return companyConverter.convertToDto(company);
     }
 
     @Override
-    public CompanyDto get(final Long id) {
-        return companyConverter.convertToDto(companyRepository.findById(id).orElse(null));
+    public CompanyDto get(final Long id, final Long authUserId) {
+        return companyConverter.convertToDto(companyRepository.findByUserIdAndId(authUserId, id));
     }
 
     @Override
     @Transactional
-    public CompanyDto update(final CompanyDto companyDto, final Long id) {
+    public CompanyDto update(final CompanyDto companyDto, final Long id, final String username) {
+        if (!companyDto.getUsername().equals(username)) {
+            throw new IllegalArgumentException(companyDto + " isn't linked to " + username);
+        }
         assureIdConsistent(companyDto, id);
-        return create(companyDto);
+        return create(companyDto, username);
     }
 
     @Override
     @Transactional
-    public CompanyDto delete(final Long id) {
-        final CompanyDto companyDto = get(id);
-        companyRepository.deleteById(id);
+    public CompanyDto delete(final Long id, final Long authUserId) {
+        final CompanyDto companyDto = get(id, authUserId);
+        companyRepository.deleteByUserIdAndId(authUserId, id);
         return companyDto;
     }
 
     @Override
-    public List<CompanyDto> getAll() {
-        return companyConverter.convertListToDto(companyRepository.findAll());
+    public List<CompanyDto> getAll(final Long authUserId) {
+        return companyConverter.convertListToDto(companyRepository.findAllByUserId(authUserId));
     }
 
     @Override
     @Transactional
-    public void deleteAll(final List<CompanyDto> userDtoList) {
-        companyRepository.deleteAll(companyConverter.convertListToEntity(userDtoList));
+    public void deleteAll(final List<CompanyDto> companyDtoList, final Long authUserId) {
+        companyRepository.deleteAll(companyConverter.convertListToEntity(companyDtoList)
+                .stream()
+                .filter(company -> company.getUser().getId().equals(authUserId))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -72,34 +80,34 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public Page<CompanyDto> findWithTheMostAssets(final Optional<String> filter, final Pageable pageable) {
+    public Page<CompanyDto> findWithTheMostAssets(final Optional<String> filter, final Pageable pageable, final Long authUserId) {
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
             return companyConverter.convertPageToDto(companyRepository
-                    .findWithTheMostAssetsAndNameLikeIgnoreCase(repositoryFilter, pageable));
+                    .findWithTheMostAssetsAndNameLikeIgnoreCase(authUserId, repositoryFilter, pageable));
         } else {
-            return companyConverter.convertPageToDto(companyRepository.findWithTheMostAssets(pageable));
+            return companyConverter.convertPageToDto(companyRepository.findWithTheMostAssets(authUserId, pageable));
         }
     }
 
     @Override
-    public Page<CompanyDto> findAnyMatching(final Optional<String> filter, final Pageable pageable) {
+    public Page<CompanyDto> findAnyMatching(final Optional<String> filter, final Pageable pageable, final Long authUserId) {
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
             return companyConverter.convertPageToDto(companyRepository
-                    .findByNameLikeIgnoreCase(repositoryFilter, pageable));
+                    .findByUserIdAndNameLikeIgnoreCase(authUserId, repositoryFilter, pageable));
         } else {
-            return companyConverter.convertPageToDto(companyRepository.findBy(pageable));
+            return companyConverter.convertPageToDto(companyRepository.findByUserId(authUserId, pageable));
         }
     }
 
     @Override
-    public long countAnyMatching(final Optional<String> filter) {
+    public long countAnyMatching(final Optional<String> filter, final Long authUserId) {
         if (filter.isPresent()) {
             String repositoryFilter = "%" + filter.get() + "%";
-            return companyRepository.countByNameLikeIgnoreCase(repositoryFilter);
+            return companyRepository.countByUserIdAndNameLikeIgnoreCase(authUserId, repositoryFilter);
         } else {
-            return companyRepository.count();
+            return companyRepository.countByUserId(authUserId);
         }
     }
 }

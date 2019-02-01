@@ -10,25 +10,30 @@ import java.util.List;
 
 public interface AssetRepository extends JpaRepository<Asset, Long> {
 
-    Asset findFirstByName(final String name);
+    Asset findByUserIdAndId(final Long authUserId, final Long id);
 
-    List<Asset> findAllByName(final String name);
+    void deleteByUserIdAndId(final Long authUserId, final Long id);
 
-    Page<Asset> findByCompanyAndNameLikeIgnoreCase(final Company company, final String name, final Pageable pageable);
+    List<Asset> findAllByUserId(final Long authUserId);
 
-    Page<Asset> findByCompany(final Company company, final Pageable pageable);
+    Page<Asset> findByUserIdAndCompanyAndNameLikeIgnoreCase(final Long authUserId, final Company company,
+                                                            final String name, final Pageable pageable);
 
-    List<Asset> findFirst50ByOrderByNumberOfTransitionDesc();
+    Page<Asset> findByUserIdAndCompany(final Long authUserId, final Company company, final Pageable pageable);
 
-    List<Asset> findFirst50ByOrderByCostDescNumberOfTransitionDesc();
+    List<Asset> findAllByUserIdOrderByNumberOfTransitionDesc(final Long authUserId);
 
-    Page<Asset> findBy(final Pageable page);
+    List<Asset> findAllByUserIdOrderByCostDescNumberOfTransitionDesc(final Long authUserId);
 
-    Page<Asset> findByNameLikeIgnoreCase(final String name, final Pageable pageable);
+    Page<Asset> findByUserId(final Long authUserId, final Pageable page);
 
-    int countByNameLikeIgnoreCase(final String name);
+    Page<Asset> findByUserIdAndNameLikeIgnoreCase(final Long authUserId, final String name, final Pageable pageable);
 
-    int countByCompanyAndNameLikeIgnoreCase(final Company company, final String name);
+    int countByUserIdAndNameLikeIgnoreCase(final Long authUserId, final String name);
 
-    int countByCompany(final Company company);
+    int countByUserIdAndCompanyAndNameLikeIgnoreCase(final Long authUserId, final Company company, final String name);
+
+    int countByUserIdAndCompany(final Long authUserId, final Company company);
+
+    int countByUserId(final Long authUserId);
 }

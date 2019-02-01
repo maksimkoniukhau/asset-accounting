@@ -8,19 +8,19 @@ import java.util.Optional;
 
 public interface CrudService<T> {
 
-    T create(final T obj);
+    T create(final T obj, final String username);
 
-    T get(final Long id);
+    T get(final Long id, final Long authUserId);
 
-    T update(final T obj, final Long id);
+    T update(final T obj, final Long id, final String username);
 
-    T delete(final Long id);
+    T delete(final Long id, final Long authUserId);
 
-    List<T> getAll();
+    List<T> getAll(final Long authUserId);
 
-    void deleteAll(final List<T> userDtoList);
+    void deleteAll(final List<T> userDtoList, final Long authUserId);
 
-    Page<T> findAnyMatching(final Optional<String> filter, final Pageable pageable);
+    Page<T> findAnyMatching(final Optional<String> filter, final Pageable pageable, final Long authUserId);
 
-    long countAnyMatching(final Optional<String> filter);
+    long countAnyMatching(final Optional<String> filter, final Long authUserId);
 }

@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUserId;
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUsername;
+
 @RestController
 @RequestMapping("company")
 @Slf4j
@@ -21,20 +24,23 @@ public class CompanyController {
 
     @PostMapping
     public CompanyDto createCompany(@RequestBody final CompanyDto companyDto) {
-        log.info("create {}", companyDto);
-        return companyService.create(companyDto);
+        final String authUsername = getAuthUsername();
+        log.info("create {} for user with username {}", companyDto, authUsername);
+        return companyService.create(companyDto, authUsername);
     }
 
     @GetMapping
     public List<CompanyDto> getAllCompanies() {
-        log.info("get all companies");
-        return companyService.getAll();
+        final Long authUserId = getAuthUserId();
+        log.info("get all companies for user with id {}", authUserId);
+        return companyService.getAll(authUserId);
     }
 
     @GetMapping("{id}")
     public CompanyDto getCompany(@PathVariable("id") final Long id) {
-        log.info("get company with id = {}", id);
-        return companyService.get(id);
+        final Long authUserId = getAuthUserId();
+        log.info("get company with id {} for user with id {}", id, authUserId);
+        return companyService.get(id, authUserId);
     }
 }
 

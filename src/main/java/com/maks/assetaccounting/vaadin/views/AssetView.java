@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUser;
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUsername;
 import static com.maks.assetaccounting.vaadin.utils.FormatterUtil.DATE_TIME_FORMATTER;
 
 @Route(value = "assets", layout = AppLayoutClass.class)
@@ -76,17 +78,17 @@ public class AssetView extends AbstractView<AssetDto> {
         this.generationBtn = new Button("Generation Assets");
         generationBtn.setEnabled(false);
         generationBtn.addClickListener(e -> {
-            assetService.generation(companyDtoComboBox.getValue().getId());
+            assetService.generation(companyDtoComboBox.getValue().getId(), getAuthUser());
             companyDtoComboBox.clear();
             assetDataProvider.refreshAll();
         });
 
-        final List<AssetDto> assetDtos = new ArrayList<>();
         final Button transitionBtn = new Button("Transition Assets");
         transitionBtn.setEnabled(false);
         transitionBtn.addClickListener(e -> {
-            assetService.transition(assetDtos, companyDtoComboBox.getValue().getId());
+            assetService.transition(new ArrayList<>(grid.getSelectedItems()), companyDtoComboBox.getValue().getId());
             companyDtoComboBox.clear();
+            grid.deselectAll();
             assetDataProvider.refreshAll();
         });
 
@@ -110,7 +112,6 @@ public class AssetView extends AbstractView<AssetDto> {
                 if (companyDtoComboBox.getValue() != null) {
                     transitionBtn.setEnabled(true);
                 }
-                assetDtos.addAll(event.getValue());
             } else {
                 transitionBtn.setEnabled(false);
             }
@@ -167,12 +168,13 @@ public class AssetView extends AbstractView<AssetDto> {
     }
 
     private void save() {
+        final String username = getAuthUsername();
         final AssetDto assetDto = assetForm.getAssetDto();
         if (assetDto.getId() == null) {
-            assetService.create(assetDto);
+            assetService.create(assetDto, username);
             assetDataProvider.refreshAll();
         } else {
-            assetService.update(assetDto, assetDto.getId());
+            assetService.update(assetDto, assetDto.getId(), username);
             assetDataProvider.refreshItem(assetDto);
         }
         assetForm.setAssetDto(null);

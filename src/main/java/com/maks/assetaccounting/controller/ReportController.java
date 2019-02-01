@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUserId;
+
 @RestController
 @RequestMapping("report")
 @Slf4j
@@ -27,13 +29,15 @@ public class ReportController {
 
     @GetMapping("asset/marketable")
     public List<AssetDto> getMarketableAssets() {
-        log.info("get marketable assets");
-        return assetService.getMarketable();
+        final Long authUserId = getAuthUserId();
+        log.info("get marketable assets for user with id {}", authUserId);
+        return assetService.getMarketable(authUserId);
     }
 
     @GetMapping("asset/expensive-and-marketable")
     public List<AssetDto> getExpensiveAndMarketableAssets() {
-        log.info("get expensive and marketable assets");
-        return assetService.getExpensiveAndMarketable();
+        final Long authUserId = getAuthUserId();
+        log.info("get expensive and marketable assets for user with id {}", authUserId);
+        return assetService.getExpensiveAndMarketable(authUserId);
     }
 }

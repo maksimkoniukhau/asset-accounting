@@ -11,5 +11,5 @@ public interface CompanyService extends CrudService<CompanyDto> {
 
     CompanyDto getByName(final String name);
 
-    Page<CompanyDto> findWithTheMostAssets(final Optional<String> filter, final Pageable pageable);
+    Page<CompanyDto> findWithTheMostAssets(final Optional<String> filter, final Pageable pageable, final Long authUserId);
 }

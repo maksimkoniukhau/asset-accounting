@@ -42,7 +42,7 @@ public class RegistrationView extends VerticalLayout {
     }
 
     private void register() {
-        userService.create(registrationForm.getUserDto());
+        userService.create(registrationForm.getUserDto(), null);
         this.getUI().ifPresent(ui -> ui.getPage()
                 .executeJavaScript("location.assign('sign-in')"));
         registrationForm.setUserDto(new UserDto());

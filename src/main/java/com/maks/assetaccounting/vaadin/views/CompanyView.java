@@ -20,6 +20,8 @@ import com.vaadin.flow.router.Route;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.maks.assetaccounting.util.SecurityUtil.getAuthUsername;
+
 @Route(value = "companies", layout = AppLayoutClass.class)
 @PageTitle("Asset Accounting/Companies")
 @Data
@@ -121,11 +123,12 @@ public class CompanyView extends AbstractView<CompanyDto> {
     }
 
     private void save() {
+        final String username = getAuthUsername();
         final CompanyDto companyDto = companyForm.getCompanyDto();
         if (companyDto.getId() == null) {
-            companyService.create(companyDto);
+            companyService.create(companyDto, username);
         } else {
-            companyService.update(companyDto, companyDto.getId());
+            companyService.update(companyDto, companyDto.getId(), username);
         }
         companyDataProvider.refreshAll();
         companyForm.setCompanyDto(null);
