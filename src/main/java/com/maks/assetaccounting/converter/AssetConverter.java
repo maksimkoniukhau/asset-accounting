@@ -5,12 +5,9 @@ import com.maks.assetaccounting.entity.Asset;
 import com.maks.assetaccounting.repository.AssetRepository;
 import com.maks.assetaccounting.repository.CompanyRepository;
 import com.maks.assetaccounting.repository.UserRepository;
-import com.maks.assetaccounting.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static com.maks.assetaccounting.util.SecurityUtil.getAuthUserId;
 
 @Service
 public class AssetConverter implements DtoEntityConverter<AssetDto, Asset> {
@@ -44,7 +41,7 @@ public class AssetConverter implements DtoEntityConverter<AssetDto, Asset> {
         if (assetDto != null) {
             final Asset asset = new Asset();
             BeanUtils.copyProperties(assetDto, asset);
-            asset.setCompany(companyRepository.findByUserIdAndName(getAuthUserId(), assetDto.getCompanyName()));
+            asset.setCompany(companyRepository.findByName(assetDto.getCompanyName()));
             asset.setNumberOfTransition(assetRepository.findById(assetDto.getId())
                     .orElse(new Asset()).getNumberOfTransition());
             asset.setUser(userRepository.findByUsername(assetDto.getUsername()));
@@ -57,7 +54,7 @@ public class AssetConverter implements DtoEntityConverter<AssetDto, Asset> {
         if (assetDto != null) {
             final Asset asset = new Asset();
             BeanUtils.copyProperties(assetDto, asset, "creationDate");
-            asset.setCompany(companyRepository.findByUserIdAndName(getAuthUserId(), assetDto.getCompanyName()));
+            asset.setCompany(companyRepository.findByName(assetDto.getCompanyName()));
             asset.setUser(userRepository.findByUsername(assetDto.getUsername()));
             return asset;
         }
