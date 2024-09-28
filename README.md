@@ -1,50 +1,50 @@
-# Прототип Системы Учета активов предприятия и генерация отчетов. 
+# Prototype of the Enterprise Asset Accounting System and Report Generation. 
  
  <b>Used technologies:</b> Spring Boot, Vaadin 12, Maven, Git, PostgreSQL, Mockito, Lombok  
  
-Краткое описание 
+Brief Description 
 
-Система учета активов предприятия предназначена для:
+The enterprise asset accounting system is designed for:
 
-- Хранения информации об активах компании
-- Анализа эффективности использования активов с помощью отчетов.
+- Storing information about the company's assets
+- Analyzing the effectiveness of asset utilization through reports.
    
-Активы (упрощенно) — это ресурсы, контролируемые компанией. 
-Примеры: мобильные устройства, здания, автомобили и т.д. 
-Активы могут переходить от одной компании к другой. 
+Assets (in simplified terms) are resources controlled by the company. 
+Examples include mobile devices, buildings, cars, etc. 
+Assets can be transferred from one company to another.
 
-Необходимо выявлять, то есть создавать отчеты для:  
+It is necessary to generate reports to identify:
 
-- активов, которые переходят от одной компании к другой чаще всего, то есть самых востребованных. 
-- компаний, с наибольшим количеством активов. 
-- самых дорогих активов и самых востребованных одновременно.
-- и другие 
+- The assets that transfer between companies most frequently, i.e., the most in-demand.
+- Companies with the highest number of assets.
+- The most expensive assets that are also the most in-demand.
+- And others.
 
-Клиентская часть 
+Client-Side
 
-Компании 
+Companies
 
-- Создать компанию 
-- Список компании 
+- Create a company
+- Company list
 
-Активы 
+Assets
 
-- Создать актив.
-- Список активов 
-- Сгенерировать 100 активов
-- Сгенерировать 100 переходов уже имеющихся произвольных активов из одной компании в другую
+- Create an asset
+- Asset list
+- Generate 100 assets
+- Generate 100 transfers of existing random assets from one company to another
  
-Отчеты 
+Reports
 
-- Самые востребованные активы
-- Компании с наибольшим количеством активов.
-- Самые дорогие активы и самые востребованные
-- и другие 
+- Most in-demand assets
+- Companies with the highest number of assets
+- Most expensive and most in-demand assets
+- And others
  
-Элементы страницы создания актива
+Elements of the Asset Creation Page
 
-- Название Актива
-- Текущая Компания Актива
-- Дата перехода в компанию
-- Стоимость
-- Дата создания Актива (создается автоматически) 
+- Asset Name
+- Current Company of the Asset
+- Date of transfer to the company
+- Cost
+- Date of Asset Creation (automatically generated)
